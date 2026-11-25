@@ -458,63 +458,67 @@
     }
 
     /* ======================================================== */
-    /* ABOUT SECTION ANIMATION STACK (1 to 7)                   */
+    /* ABOUT SECTION STYLES & ELEMENT ANIMATIONS                */
     /* ======================================================== */
     .about-box-card {
-      opacity: 0;
-      transform: translateY(48px) scale(0.95);
-      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease, border-color 0.6s ease;
-      will-change: transform, opacity, box-shadow;
+      opacity: 1 !important;
+      transform: none !important;
       border-radius: 28px;
       border: 1.5px solid rgba(255, 90, 0, 0.45);
       background: radial-gradient(circle at 82% 70%, rgba(255, 90, 0, 0.08) 0%, transparent 55%), #050505;
+      box-shadow: 0 0 30px rgba(255, 90, 0, 0.22), 0 25px 60px rgba(0, 0, 0, 0.9);
       overflow: hidden;
       position: relative;
-      transform-style: preserve-3d;
     }
     .about-huge-title {
       font-family: 'Montserrat', sans-serif;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: -0.02em;
-      line-height: 0.86;
+      line-height: 0.82;
+      letter-spacing: normal;
       user-select: none;
     }
-    .about-huge-title,
-    .about-huge-title span {
-      background: linear-gradient(180deg, #FF7A00 0%, #FF5A00 48%, #C73500 100%);
+    .about-letter {
+      display: inline-block;
+      background: linear-gradient(135deg, #FF8A00 0%, #FFAE70 25%, #FF5A00 50%, #D84800 75%, #FF8A00 100%);
+      background-size: 250% 250%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: aboutLetterGradientShift 7s ease-in-out infinite;
+      animation-delay: calc(var(--i, 0) * 0.35s);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease;
+      cursor: default;
+      will-change: transform, filter;
+    }
+    .about-letter:hover {
+      transform: translateY(-6px) scale(1.04);
+      filter: drop-shadow(0 0 25px rgba(255, 122, 0, 0.75));
+    }
+    @keyframes aboutLetterGradientShift {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
     }
     .about-ambient-glow {
       position: absolute;
-      inset: -20px -30px;
-      background: radial-gradient(circle at 6% 50%, rgba(255, 90, 0, 0.32) 0%, transparent 45%),
-                  radial-gradient(circle at 94% 50%, rgba(255, 90, 0, 0.3) 0%, transparent 45%),
-                  radial-gradient(circle at 50% 5%, rgba(255, 90, 0, 0.12) 0%, transparent 40%),
-                  radial-gradient(circle at 50% 95%, rgba(255, 90, 0, 0.12) 0%, transparent 40%);
-      filter: blur(35px);
+      inset: -30px -40px;
+      background: radial-gradient(circle at 6% 50%, rgba(255, 90, 0, 0.28) 0%, transparent 45%),
+                  radial-gradient(circle at 94% 50%, rgba(255, 90, 0, 0.28) 0%, transparent 45%),
+                  radial-gradient(circle at 50% 5%, rgba(255, 90, 0, 0.1) 0%, transparent 40%),
+                  radial-gradient(circle at 50% 95%, rgba(255, 90, 0, 0.1) 0%, transparent 40%);
+      filter: blur(40px);
       pointer-events: none;
       z-index: 1;
-      opacity: 0.9;
+      opacity: 0.85;
     }
-    .about-box-card.is-revealed {
-      opacity: 1 !important;
-      transform: translateY(0) scale(1);
-      animation: aboutNeonPulse 3.4s ease-in-out infinite;
-    }
-    /* 5. Neon Border Pulse */
-    @keyframes aboutNeonPulse {
-      0%, 100% {
-        border-color: rgba(255, 90, 0, 0.45);
-        box-shadow: 0 0 24px rgba(255, 90, 0, 0.35), 0 0 50px rgba(216, 96, 24, 0.18), inset 0 0 15px rgba(255, 90, 0, 0.12), 0 25px 60px rgba(0, 0, 0, 0.9);
-      }
-      50% {
-        border-color: rgba(255, 154, 60, 0.85);
-        box-shadow: 0 0 42px rgba(255, 122, 0, 0.65), 0 0 75px rgba(255, 90, 0, 0.35), inset 0 0 25px rgba(255, 90, 0, 0.22), 0 30px 70px rgba(0, 0, 0, 0.95);
-      }
-    }
-    /* 4. Border Draw */
+    /* Static Crisp Border */
     .about-border-svg {
       position: absolute;
       inset: 0;
@@ -524,53 +528,41 @@
       z-index: 20;
     }
     .about-border-rect {
-      stroke-dasharray: 100;
-      stroke-dashoffset: 100;
-      transition: stroke-dashoffset 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.35s;
+      transition: none;
     }
-    .about-box-card.is-revealed .about-border-rect {
-      stroke-dashoffset: 0;
+    /* Portrait Container & Floating Animation */
+    .about-portrait-wrap {
+      animation: aboutPortraitFloat 6s ease-in-out infinite;
+      will-change: transform;
     }
-    /* 6. Light Sweep Reflection */
-    .about-light-sweep {
-      position: absolute;
-      top: -60%;
-      left: -130%;
-      width: 70%;
-      height: 220%;
-      background: linear-gradient(
-        105deg,
-        transparent 20%,
-        rgba(255, 122, 0, 0.08) 35%,
-        rgba(255, 255, 255, 0.45) 50%,
-        rgba(255, 154, 60, 0.4) 53%,
-        transparent 70%
-      );
-      transform: rotate(25deg);
-      pointer-events: none;
-      z-index: 15;
-      opacity: 0;
-      mix-blend-mode: screen;
-    }
-    @keyframes aboutSweepAnim {
-      0% {
-        left: -130%;
-        opacity: 0;
+    @keyframes aboutPortraitFloat {
+      0%, 100% {
+        transform: translateY(0px);
       }
-      10% {
-        opacity: 0.95;
-      }
-      38% {
-        left: 170%;
-        opacity: 0.95;
-      }
-      42%, 100% {
-        left: 170%;
-        opacity: 0;
+      50% {
+        transform: translateY(-8px);
       }
     }
-    .about-box-card.is-revealed .about-light-sweep {
-      animation: aboutSweepAnim 6.5s ease-in-out 1.2s infinite;
+    /* Portrait Image Breathing Glow Pulse */
+    .about-portrait-img {
+      animation: aboutPortraitAuraPulse 4.8s ease-in-out infinite;
+      will-change: filter;
+    }
+    @keyframes aboutPortraitAuraPulse {
+      0%, 100% {
+        filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 16px rgba(255, 90, 0, 0.25));
+      }
+      50% {
+        filter: drop-shadow(0 20px 42px rgba(0, 0, 0, 0.92)) drop-shadow(0 0 32px rgba(255, 122, 0, 0.5));
+      }
+    }
+    /* Content Elements Animation on Hover / Entrance */
+    .about-headline-word {
+      display: inline-block;
+      transition: transform 0.25s ease, color 0.25s ease;
+    }
+    .about-headline-word:hover {
+      transform: translateX(4px);
     }
   </style>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -760,14 +752,14 @@
         <!-- ======================================================== -->
         <!-- 2. ABOUT SECTION (#about) - EDITABLE DESIGN REFERENCE   -->
         <!-- ======================================================== -->
-        <section class="py-8 sm:py-12 lg:py-16 relative overflow-hidden bg-black z-20" id="about">
+        <section class="py-6 sm:py-10 lg:py-12 relative overflow-hidden" id="about">
           <!-- Ambient Orange Glow behind container -->
           <div class="about-ambient-glow"></div>
 
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 relative z-10" style="perspective: 1200px;">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
             <div id="about-card" class="about-box-card relative w-full max-w-[1050px] mx-auto rounded-[24px] sm:rounded-[28px] overflow-hidden cursor-default select-none border border-[#FF7A00]/40 shadow-2xl">
               
-              <!-- SVG Animated Perimeter Border Draw (Item 4) -->
+              <!-- SVG Perimeter Border -->
               <svg class="about-border-svg pointer-events-none absolute inset-0 w-full h-full z-20" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <linearGradient id="aboutNeonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -777,40 +769,43 @@
                     <stop offset="100%" stop-color="#FF5A00" />
                   </linearGradient>
                 </defs>
-                <rect id="about-border-rect" class="about-border-rect" x="2" y="2" rx="26" ry="26" fill="none" stroke="url(#aboutNeonGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" pathLength="100" />
+                <rect id="about-border-rect" class="about-border-rect" x="2" y="2" rx="26" ry="26" fill="none" stroke="url(#aboutNeonGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
-
-              <!-- Periodic Sheen / Light Sweep Reflection (Item 6) -->
-              <div class="about-light-sweep"></div>
 
               <!-- ========================================== -->
               <!-- DESKTOP VIEWPORT (lg:flex & xl)           -->
               <!-- ========================================== -->
               <div class="hidden lg:block relative w-full h-[530px] xl:h-[565px] px-10 xl:px-12 pt-8 xl:pt-10 pb-8 z-10">
-                <!-- Large Oversized "ABOUT" Headline -->
+                <!-- Large Oversized "ABOUT" Headline with Equal Symmetrical Spacing -->
                 <div class="absolute top-4 xl:top-5 left-8 xl:left-10 z-[5] pointer-events-none">
-                  <h2 class="about-huge-title text-[9.8rem] xl:text-[11.5rem] m-0 tracking-[-0.03em] leading-[0.82]">
-                    ABOUT
+                  <h2 class="about-huge-title flex items-baseline gap-[0.09em] xl:gap-[0.11em] text-[9.2rem] xl:text-[10.6rem] m-0 leading-[0.82]">
+                    <span class="about-letter" style="--i:0">A</span>
+                    <span class="about-letter" style="--i:1">B</span>
+                    <span class="about-letter" style="--i:2">O</span>
+                    <span class="about-letter" style="--i:3">U</span>
+                    <span class="about-letter" style="--i:4">T</span>
                   </h2>
                 </div>
 
-                <!-- Left Content: Headline, Description & Signature -->
+                <!-- Left Content: Headline, Description & Signature with Professional Interactions -->
                 <div class="relative z-10 max-w-[420px] xl:max-w-[450px] pt-[175px] xl:pt-[190px] flex flex-col">
                   <h3 class="text-white font-black uppercase text-[26px] xl:text-[28px] tracking-tight leading-[1.14] mb-3.5 drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
-                    BEYOND CODE.<br>
-                    DRIVEN BY DESIGN.
+                    <span class="about-headline-word">BEYOND CODE.</span><br>
+                    <span class="about-headline-word text-transparent bg-clip-text bg-gradient-to-r from-white via-[#FFE5BE] to-white">DRIVEN BY DESIGN.</span>
                   </h3>
                   <p class="text-white/85 text-[14px] xl:text-[15px] leading-relaxed font-normal mb-6 max-w-[390px]">
                     I'm Tasnim Tanha, a Frontend Developer &amp; UI Designer passionate about creating modern, interactive and visually engaging digital experiences.
                   </p>
                   <div class="pt-1">
-                    <img src="assets/tasnim-signature-clean.png" alt="Tasnim Tanha Signature" class="w-44 xl:w-48 h-auto object-contain filter drop-shadow-[0_2px_14px_rgba(255,106,0,0.55)]">
+                    <div class="inline-block transition-transform duration-300 hover:scale-105 cursor-default">
+                      <img src="assets/tasnim-signature-clean.png" alt="Tasnim Tanha Signature" class="w-44 xl:w-48 h-auto object-contain filter drop-shadow-[0_2px_14px_rgba(255,106,0,0.55)] hover:drop-shadow-[0_4px_22px_rgba(255,122,0,0.85)] hover:brightness-110 transition-all duration-300">
+                    </div>
                   </div>
                 </div>
 
-                <!-- Right Content: Portrait Overlapping the Orange Frame and "ABOUT" Text -->
-                <div class="absolute right-7 xl:right-9 bottom-4 xl:bottom-5 w-[49%] max-w-[465px] xl:max-w-[495px] z-10 pointer-events-none">
-                  <img src="assets/about-tasnim-portrait-clean.png" alt="Tasnim Tanha - Frontend Developer &amp; UI Designer" class="w-full h-auto object-contain select-none pointer-events-none filter drop-shadow-[0_15px_35px_rgba(0,0,0,0.85)]">
+                <!-- Right Content: Floating Portrait Overlapping the Orange Frame and "ABOUT" Text -->
+                <div id="about-portrait-desktop" class="about-portrait-wrap absolute right-7 xl:right-9 bottom-4 xl:bottom-5 w-[49%] max-w-[465px] xl:max-w-[495px] z-10 pointer-events-none">
+                  <img src="assets/about-tasnim-portrait-clean.png" alt="Tasnim Tanha - Frontend Developer &amp; UI Designer" class="about-portrait-img w-full h-auto object-contain select-none pointer-events-none">
                 </div>
               </div>
 
@@ -818,32 +813,42 @@
               <!-- TABLET & MOBILE VIEWPORT (< lg)           -->
               <!-- ========================================== -->
               <div class="lg:hidden relative w-full px-5 sm:px-8 py-7 sm:py-9 z-10 flex flex-col">
-                <!-- Large Oversized "ABOUT" Headline -->
+                <!-- Large Oversized "ABOUT" Headline with Equal Spacing -->
                 <div class="w-full text-left sm:text-center mb-1">
-                  <h2 class="about-huge-title text-[4.8rem] sm:text-[6.8rem] md:text-[8rem] tracking-[-0.04em] leading-[0.86]">
-                    ABOUT
+                  <h2 class="about-huge-title flex items-baseline justify-start sm:justify-center gap-[0.08em] text-[4.6rem] sm:text-[6.4rem] md:text-[7.6rem] leading-[0.86]">
+                    <span class="about-letter" style="--i:0">A</span>
+                    <span class="about-letter" style="--i:1">B</span>
+                    <span class="about-letter" style="--i:2">O</span>
+                    <span class="about-letter" style="--i:3">U</span>
+                    <span class="about-letter" style="--i:4">T</span>
                   </h2>
                 </div>
 
-                <!-- Portrait with Orange Frame -->
-                <div class="w-full max-w-[340px] sm:max-w-[390px] mx-auto my-3 sm:my-5 relative z-10">
-                  <img src="assets/about-tasnim-portrait-clean.png" alt="Tasnim Tanha - Frontend Developer &amp; UI Designer" class="w-full h-auto object-contain select-none pointer-events-none filter drop-shadow-[0_12px_28px_rgba(0,0,0,0.85)]">
+                <!-- Floating Portrait with Orange Frame -->
+                <div class="about-portrait-wrap w-full max-w-[340px] sm:max-w-[390px] mx-auto my-3 sm:my-5 relative z-10">
+                  <img src="assets/about-tasnim-portrait-clean.png" alt="Tasnim Tanha - Frontend Developer &amp; UI Designer" class="about-portrait-img w-full h-auto object-contain select-none pointer-events-none">
                 </div>
 
                 <!-- Left Content: Headline, Description & Signature -->
                 <div class="w-full max-w-[440px] mx-auto flex flex-col text-left mt-2">
                   <h3 class="text-white font-black uppercase text-xl sm:text-2xl tracking-tight leading-[1.15] mb-2.5">
-                    BEYOND CODE.<br>
-                    DRIVEN BY DESIGN.
+                    <span class="about-headline-word">BEYOND CODE.</span><br>
+                    <span class="about-headline-word text-transparent bg-clip-text bg-gradient-to-r from-white via-[#FFE5BE] to-white">DRIVEN BY DESIGN.</span>
                   </h3>
                   <p class="text-white/85 text-xs sm:text-sm leading-relaxed font-normal mb-4 sm:mb-5">
                     I'm Tasnim Tanha, a Frontend Developer &amp; UI Designer passionate about creating modern, interactive and visually engaging digital experiences.
                   </p>
                   <div class="pt-0.5">
-                    <img src="assets/tasnim-signature-clean.png" alt="Tasnim Tanha Signature" class="w-36 sm:w-42 h-auto object-contain filter drop-shadow-[0_2px_12px_rgba(255,106,0,0.5)]">
+                    <div class="inline-block transition-transform duration-300 hover:scale-105 cursor-default">
+                      <img src="assets/tasnim-signature-clean.png" alt="Tasnim Tanha Signature" class="w-36 sm:w-42 h-auto object-contain filter drop-shadow-[0_2px_12px_rgba(255,106,0,0.5)] hover:drop-shadow-[0_4px_20px_rgba(255,122,0,0.8)] transition-all duration-300">
+                    </div>
                   </div>
                 </div>
               </div>
+
+            </div>
+          </div>
+        </section>
 
             </div>
           </div>
@@ -3626,15 +3631,13 @@
     })();
 
     // -------------------------------------------------------------
-    // 2. ABOUT SECTION ANIMATION CONTROLLER (Scroll Reveal, Slide Up, Scale, Border Draw, Neon Pulse, Light Sweep, 3D Tilt)
+    // 2. ABOUT SECTION CONTROLLER (SVG Border Sizing & Portrait Micro-Parallax)
     // -------------------------------------------------------------
     (function initAboutSectionAnimations() {
       const aboutCard = document.getElementById('about-card');
       const aboutBorderRect = document.getElementById('about-border-rect');
+      const desktopPortrait = document.getElementById('about-portrait-desktop');
       if (!aboutCard) return;
-
-      let isRevealed = false;
-      let isHovering = false;
 
       // Update SVG border width & height accurately to card bounds
       function updateSvgDimensions() {
@@ -3646,58 +3649,28 @@
         }
       }
 
-      // Scroll Reveal: Opacity 0->1, Smooth Slide Up, Scale Reveal (0.95 -> 1.0), Border Draw
-      if ('IntersectionObserver' in window) {
-        const obs = new IntersectionObserver((entries, observer) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              isRevealed = true;
-              updateSvgDimensions();
-              aboutCard.classList.add('is-revealed');
-              observer.unobserve(entry.target);
-            }
-          });
-        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+      // Subtle Desktop Interactive Micro-Parallax on Portrait
+      if (desktopPortrait && window.matchMedia('(min-width: 1024px)').matches) {
+        aboutCard.addEventListener('mousemove', e => {
+          const rect = aboutCard.getBoundingClientRect();
+          const cx = rect.left + rect.width * 0.75;
+          const cy = rect.top + rect.height * 0.6;
+          const deltaX = Math.max(-1, Math.min(1, (e.clientX - cx) / (rect.width * 0.35)));
+          const deltaY = Math.max(-1, Math.min(1, (e.clientY - cy) / (rect.height * 0.4)));
 
-        obs.observe(aboutCard);
-      } else {
-        isRevealed = true;
-        updateSvgDimensions();
-        aboutCard.classList.add('is-revealed');
+          const shiftX = (deltaX * 5).toFixed(1);
+          const shiftY = (deltaY * 5).toFixed(1);
+          desktopPortrait.style.transform = `translate3d(${shiftX}px, ${shiftY}px, 0)`;
+        });
+
+        aboutCard.addEventListener('mouseleave', () => {
+          desktopPortrait.style.transform = 'translate3d(0, 0, 0)';
+        });
       }
-
-      // 3D Tilt on Desktop mousemove
-      aboutCard.addEventListener('mouseenter', () => {
-        if (!isRevealed || window.innerWidth < 1024) return;
-        isHovering = true;
-        aboutCard.style.transition = 'transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease';
-      });
-
-      aboutCard.addEventListener('mousemove', e => {
-        if (!isRevealed || window.innerWidth < 1024) return;
-        const rect = aboutCard.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-
-        const normX = Math.max(-1, Math.min(1, (e.clientX - centerX) / (rect.width / 2)));
-        const normY = Math.max(-1, Math.min(1, (e.clientY - centerY) / (rect.height / 2)));
-
-        const maxTilt = 5.5; // subtle, high-end 3D tilt
-        const rotY = (normX * maxTilt).toFixed(2);
-        const rotX = (-normY * maxTilt).toFixed(2);
-
-        aboutCard.style.transform = `perspective(1200px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.015) translateY(-3px)`;
-      });
-
-      aboutCard.addEventListener('mouseleave', () => {
-        if (!isRevealed) return;
-        isHovering = false;
-        aboutCard.style.transition = 'transform 0.65s cubic-bezier(0.34, 1.25, 0.64, 1), box-shadow 0.5s ease';
-        aboutCard.style.transform = 'perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1) translateY(0)';
-      });
 
       window.addEventListener('resize', updateSvgDimensions, { passive: true });
       updateSvgDimensions();
+      setTimeout(updateSvgDimensions, 300);
     })();
 
     // -------------------------------------------------------------
