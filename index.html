@@ -729,6 +729,7 @@
   </script>
   <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <link rel="preload" href="assets/3d_robot.glb" as="fetch" type="model/gltf-binary" crossorigin>
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 </head>
 <body class="bg-[#D86018] font-body-md text-[#E0E2EC] antialiased selection:bg-[#D86018] selection:text-white relative min-h-screen">
@@ -2015,6 +2016,7 @@
                     id="robot-3d-model"
                     src="assets/3d_robot.glb"
                     alt="3D Interactive Robot - Tasnim Tanha Portfolio"
+                    loading="eager"
                     auto-rotate
                     auto-rotate-delay="0"
                     rotation-per-second="20deg"
