@@ -100,7 +100,7 @@
       cursor: grabbing;
     }
     .skill-fan-card {
-      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease, border-color 0.4s ease, filter 0.4s ease;
+      transition: transform 0.46s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, border-color 0.35s ease, filter 0.35s ease;
       transform-style: preserve-3d;
       will-change: transform, filter;
       background-color: #1A1D20;
@@ -176,10 +176,10 @@
       justify-content: space-between;
       cursor: pointer;
       user-select: none;
-      transition: transform 0.65s cubic-bezier(0.2, 0.85, 0.3, 1), 
-                  opacity 0.65s cubic-bezier(0.2, 0.85, 0.3, 1), 
-                  box-shadow 0.65s ease, 
-                  border-color 0.65s ease;
+      transition: transform 0.48s cubic-bezier(0.22, 1, 0.36, 1), 
+                  opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1), 
+                  box-shadow 0.45s ease, 
+                  border-color 0.45s ease;
       will-change: transform, opacity;
       transform-origin: center center;
     }
@@ -272,7 +272,7 @@
       transform-style: preserve-3d;
     }
     .process-horizon-card {
-      transition: transform 0.68s cubic-bezier(0.25, 1, 0.35, 1), box-shadow 0.5s ease, border-color 0.5s ease, filter 0.5s ease, opacity 0.5s ease;
+      transition: transform 0.48s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease, border-color 0.4s ease, filter 0.4s ease, opacity 0.4s ease;
       transform-style: preserve-3d;
       will-change: transform, opacity, box-shadow;
       background-color: #1A1D20;
@@ -374,7 +374,7 @@
       height: 380px;
       border-radius: 28px;
       transform-origin: 50% 120%;
-      transition: transform 0.65s cubic-bezier(0.34, 1.25, 0.64, 1), box-shadow 0.45s ease, filter 0.45s ease, border-color 0.45s ease, opacity 0.5s ease;
+      transition: transform 0.48s cubic-bezier(0.25, 1, 0.35, 1), box-shadow 0.38s ease, filter 0.38s ease, border-color 0.38s ease, opacity 0.4s ease;
       will-change: transform, box-shadow, filter;
       cursor: pointer;
       user-select: none;
@@ -3050,8 +3050,8 @@
         sectionId,
         containerId,
         onNext,
-        interval = 4000,
-        pauseDuration = 6000
+        interval = 2500,
+        pauseDuration = 4500
       } = options;
 
       const sectionEl = document.getElementById(sectionId);
@@ -3349,8 +3349,8 @@
       sectionId: 'skills',
       containerId: 'skill-deck-container',
       onNext: () => shiftSkillCard(1, false),
-      interval: 4000,
-      pauseDuration: 6000
+      interval: 2500,
+      pauseDuration: 4500
     });
 
     // -------------------------------------------------------------
@@ -3516,8 +3516,8 @@
         sectionId: 'process',
         containerId: 'process-deck-container',
         onNext: () => shiftProcessDeck(1, false),
-        interval: 3800,
-        pauseDuration: 6000
+        interval: 2400,
+        pauseDuration: 4500
       });
     })();
     // FANNED FOLDER DECK FOR FEATURED PROJECTS (Animation Stack 1 to 6)
@@ -3794,8 +3794,8 @@
         sectionId: 'projects',
         containerId: 'project-deck-wrapper',
         onNext: () => shiftProjectDeck(1, false),
-        interval: 4200,
-        pauseDuration: 6000
+        interval: 2600,
+        pauseDuration: 4500
       });
     })();
 
@@ -4075,8 +4075,8 @@
         sectionId: 'services',
         containerId: 'curved-carousel-stage',
         onNext: () => goToCard(activeIndex + 1, false),
-        interval: 4000,
-        pauseDuration: 6000
+        interval: 2500,
+        pauseDuration: 4500
       });
     })();
 
