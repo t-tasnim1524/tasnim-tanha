@@ -600,6 +600,8 @@
       overflow: hidden;
       position: relative;
       opacity: 1;
+      transform: translateZ(0);
+      will-change: transform;
     }
     .about-huge-title {
       font-family: 'Montserrat', sans-serif;
@@ -620,7 +622,7 @@
       animation-delay: calc(var(--i, 0) * 0.35s);
       transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease;
       cursor: default;
-      will-change: transform, filter;
+      will-change: transform;
     }
     .about-letter:hover {
       transform: translateY(-6px) scale(1.04);
@@ -648,6 +650,8 @@
       pointer-events: none;
       z-index: 1;
       opacity: 0.85;
+      transform: translateZ(0);
+      will-change: transform;
     }
 
     /* 2. Border Glow: Traveling Light Beam orbiting the card */
@@ -658,6 +662,8 @@
       height: 100%;
       pointer-events: none;
       z-index: 20;
+      transform: translateZ(0);
+      will-change: transform;
     }
     .about-border-rect {
       transition: none;
@@ -667,6 +673,7 @@
       stroke-dashoffset: 0;
       animation: borderLightTravel 4.5s linear infinite;
       will-change: stroke-dashoffset;
+      filter: drop-shadow(0 0 4px #FF7A00) drop-shadow(0 0 10px #FF5A00);
     }
     @keyframes borderLightTravel {
       from {
@@ -1060,7 +1067,7 @@
                 <!-- Static base outline -->
                 <rect id="about-border-rect" class="about-border-rect" x="2" y="2" width="99.6%" height="99.3%" rx="26" ry="26" fill="none" stroke="url(#aboutNeonGrad)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
                 <!-- Dynamic traveling glowing light beam -->
-                <rect id="about-traveling-beam" class="about-traveling-beam" x="2" y="2" width="99.6%" height="99.3%" rx="26" ry="26" fill="none" stroke="url(#travelingLightGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" pathLength="1000" filter="url(#borderGlowFilter)" />
+                <rect id="about-traveling-beam" class="about-traveling-beam" x="2" y="2" width="99.6%" height="99.3%" rx="26" ry="26" fill="none" stroke="url(#travelingLightGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" pathLength="1000" />
               </svg>
 
               <!-- ========================================== -->
@@ -2589,6 +2596,8 @@
       render(Math.round(currentFrame));
     }
 
+    let lastRenderedImg = null;
+
     function render(frameIndex) {
       if (!canvas || !ctx) return;
       const targetIdx = Math.min(TOTAL_FRAMES, Math.max(1, frameIndex));
@@ -2615,7 +2624,11 @@
       }
 
       if (!img || !img.complete || img.naturalWidth === 0) {
-        needsRedraw = true;
+        return;
+      }
+
+      // Avoid redundant canvas draws if the same image is already drawn for this frame index
+      if (lastRenderedFrame === targetIdx && lastRenderedImg === img) {
         return;
       }
 
@@ -2636,18 +2649,14 @@
 
       ctx.drawImage(img, x, y, nw, nh);
 
-      if (isExact) {
-        lastRenderedFrame = targetIdx;
-        needsRedraw = false;
-      } else {
-        lastRenderedFrame = -1;
-        needsRedraw = true;
-      }
+      lastRenderedFrame = targetIdx;
+      lastRenderedImg = img;
+      needsRedraw = false;
     }
 
     function onImageLoaded(idx) {
       const activeIdx = Math.round(currentFrame);
-      if (activeIdx === idx || lastRenderedFrame === -1 || needsRedraw) {
+      if (Math.abs(activeIdx - idx) <= 2 || lastRenderedFrame === -1) {
         render(activeIdx);
       }
     }
@@ -2689,17 +2698,19 @@
     }
 
     function preloadFrames() {
-      // 1. Prioritize frame 1
-      loadFrame(1);
+      // 1. Immediately preload frames 1 through 25 (entire Hero -> About opening sequence)
+      for (let i = 1; i <= Math.min(25, TOTAL_FRAMES); i++) {
+        loadFrame(i);
+      }
 
-      // 2. Load keyframes across scroll timeline immediately
-      for (let i = 5; i <= TOTAL_FRAMES; i += 5) {
+      // 2. Preload keyframes across remaining sections
+      for (let i = 30; i <= TOTAL_FRAMES; i += 5) {
         loadFrame(i);
       }
       loadFrame(TOTAL_FRAMES);
 
-      // 3. Incrementally load remaining intermediate frames in idle batches so network & main thread never spike
-      let nextBatch = 2;
+      // 3. Incrementally load remaining intermediate frames in idle batches
+      let nextBatch = 26;
       function loadNextBatch() {
         const batchEnd = Math.min(nextBatch + 4, TOTAL_FRAMES);
         for (let i = nextBatch; i <= batchEnd; i++) {
@@ -2714,7 +2725,7 @@
           }
         }
       }
-      setTimeout(loadNextBatch, 120);
+      setTimeout(loadNextBatch, 100);
     }
 
     function onScroll(e) {
@@ -2767,7 +2778,7 @@
       }
 
       const rounded = Math.round(currentFrame);
-      if (rounded !== lastRenderedFrame || needsRedraw) {
+      if (rounded !== lastRenderedFrame) {
         render(rounded);
       }
 
@@ -2782,7 +2793,7 @@
     requestAnimationFrame(unifiedLoop);
 
     // -------------------------------------------------------------
-    // DYNAMIC CAPSULE NAVBAR ACTIVE HIGHLIGHT (rAF Throttled)
+    // DYNAMIC CAPSULE NAVBAR ACTIVE HIGHLIGHT (rAF Throttled + Cached Offsets)
     // -------------------------------------------------------------
     let navUpdatePending = false;
     const sContact = document.getElementById('contact');
@@ -2792,20 +2803,31 @@
     const sAbout = document.getElementById('about');
     const navLinks = document.querySelectorAll('.nav-item');
 
+    let sectionOffsets = { contact: 0, services: 0, projects: 0, skills: 0, about: 0 };
+    function computeSectionOffsets() {
+      if (sContact) sectionOffsets.contact = sContact.offsetTop;
+      if (sServices) sectionOffsets.services = sServices.offsetTop;
+      if (sProjects) sectionOffsets.projects = sProjects.offsetTop;
+      if (sSkills) sectionOffsets.skills = sSkills.offsetTop;
+      if (sAbout) sectionOffsets.about = sAbout.offsetTop;
+    }
+    computeSectionOffsets();
+    window.addEventListener('resize', computeSectionOffsets, { passive: true });
+
     function updateActiveNav() {
       navUpdatePending = false;
       const scrollPos = (window.scrollY || document.documentElement.scrollTop) + 200;
       let activePath = 'home';
 
-      if (sContact && scrollPos >= sContact.offsetTop) {
+      if (scrollPos >= sectionOffsets.contact) {
         activePath = 'contact';
-      } else if (sServices && scrollPos >= sServices.offsetTop) {
+      } else if (scrollPos >= sectionOffsets.services) {
         activePath = 'services';
-      } else if (sProjects && scrollPos >= sProjects.offsetTop) {
+      } else if (scrollPos >= sectionOffsets.projects) {
         activePath = 'projects';
-      } else if (sSkills && scrollPos >= sSkills.offsetTop) {
+      } else if (scrollPos >= sectionOffsets.skills) {
         activePath = 'skills';
-      } else if (sAbout && scrollPos >= sAbout.offsetTop) {
+      } else if (scrollPos >= sectionOffsets.about) {
         activePath = 'about';
       } else {
         activePath = 'home';
@@ -4066,9 +4088,6 @@
 
       updateSvgDimensions();
       window.addEventListener('resize', updateSvgDimensions, { passive: true });
-      setTimeout(updateSvgDimensions, 100);
-      setTimeout(updateSvgDimensions, 400);
-      setTimeout(updateSvgDimensions, 1000);
 
       // Interactive Smooth Depth Parallax on Portrait
       if (desktopPortrait && window.matchMedia('(min-width: 1024px)').matches) {
