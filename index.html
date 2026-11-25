@@ -199,56 +199,6 @@
       border-radius: 9999px;
       box-shadow: 0 0 20px rgba(255, 122, 0, 0.6);
     }
-    /* Glowing Neon Orbit Ring around Robot Base (Reference Match) */
-    .orbit-ring-glow {
-      position: absolute;
-      bottom: 55px;
-      left: 50%;
-      transform: translateX(-50%) rotateX(74deg);
-      width: 320px;
-      height: 110px;
-      border-radius: 50%;
-      border: 3px solid rgba(255, 122, 0, 0.95);
-      box-shadow: 0 0 35px #FF7A00, 0 0 70px rgba(255, 90, 0, 0.75), inset 0 0 25px #FF7A00;
-      pointer-events: none;
-      z-index: 23;
-      animation: orbitRingPulse 4s ease-in-out infinite alternate;
-    }
-    @keyframes orbitRingPulse {
-      0% {
-        box-shadow: 0 0 30px #FF7A00, 0 0 60px rgba(255, 90, 0, 0.6), inset 0 0 20px #FF7A00;
-        opacity: 0.85;
-      }
-      100% {
-        box-shadow: 0 0 45px #FFAE70, 0 0 90px rgba(255, 122, 0, 0.95), inset 0 0 35px #FFAE70;
-        opacity: 1;
-      }
-    }
-    .planet-horizon-glow {
-      position: absolute;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 300px;
-      height: 80px;
-      border-radius: 50%;
-      background: radial-gradient(ellipse at center, rgba(255, 100, 0, 0.6) 0%, rgba(255, 60, 0, 0.25) 50%, transparent 80%);
-      filter: blur(16px);
-      pointer-events: none;
-      z-index: 20;
-    }
-    @media (max-width: 767px) {
-      .orbit-ring-glow {
-        bottom: 75px;
-        width: 220px;
-        height: 75px;
-      }
-      .planet-horizon-glow {
-        bottom: 65px;
-        width: 200px;
-        height: 50px;
-      }
-    }
     .robot-floating-wrapper {
       animation: robotGentleFloat 5s ease-in-out infinite;
       will-change: transform;
@@ -2003,28 +1953,22 @@
                 <!-- ======================================================== -->
         <!-- 6. WHAT I DO SECTION (#services) - 3D CURVED CAROUSEL    -->
         <!-- ======================================================== -->
-        <section class="py-10 sm:py-14 lg:py-16 relative overflow-hidden bg-gradient-to-b from-[#09090B] via-[#0C0709] to-[#09090B]" id="services">
-          <!-- Deep Studio Vignette & Ambient Radial Glows (Reference Match) -->
-          <div class="absolute inset-0 bg-[radial-gradient(ellipse_85%_65%_at_50%_50%,rgba(32,12,18,0.7)_0%,rgba(10,5,8,0.92)_55%,#09090B_100%)] pointer-events-none"></div>
-          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[720px] h-[520px] bg-radial from-[#FF5A00]/22 via-[#FF4000]/8 to-transparent blur-3xl pointer-events-none"></div>
+        <section class="py-8 sm:py-10 lg:py-12 relative overflow-hidden" id="services">
+          <!-- Ambient Orange Orbital Ring Glow Accents (Original Site Background Accents) -->
+          <div class="absolute -top-[120px] -left-[120px] w-[500px] h-[500px] rounded-full border border-[#FF5A00]/20 pointer-events-none opacity-40 blur-[1px]"></div>
+          <div class="absolute -bottom-[140px] -right-[140px] w-[620px] h-[620px] rounded-full border border-[#FF5A00]/25 pointer-events-none opacity-50 blur-[1px]"></div>
 
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div class="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
             
-            <!-- Centered Header matching Reference Image -->
-            <div class="flex flex-col items-center text-center mb-8 sm:mb-10">
-              <!-- Pill Badge -->
-              <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-3 shadow-lg">
-                <span class="w-2 h-2 rounded-full bg-[#FF7A00] animate-pulse"></span>
-                <span class="text-[11px] font-label-code text-white/90 uppercase tracking-widest font-semibold">WHAT I DO</span>
+            <!-- Left-aligned Header (Fixed from middle to left) -->
+            <div class="flex flex-col gap-1.5 mb-4 sm:mb-6">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="w-8 h-1 bg-[#FF5A00] rounded-full inline-block"></span>
               </div>
-              
-              <!-- Main Title -->
-              <h2 class="font-display-hero text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white mb-2.5 drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)]">
-                What I <span class="bg-gradient-to-r from-[#FF7A00] via-[#FF5A00] to-[#E04000] bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(255,122,0,0.6)]">Do</span>
+              <h2 class="section-title-reveal font-display-hero text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)]">
+                WHAT I <span class="text-[#FFE5BE] drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]" style="text-shadow: 0 4px 18px rgba(0,0,0,0.95), 0 2px 6px rgba(0,0,0,0.9);">DO</span>
               </h2>
-              
-              <!-- Subtitle -->
-              <p class="font-headline-sm text-sm sm:text-base md:text-lg font-medium text-white/70 max-w-xl">
+              <p class="section-sub-reveal font-headline-sm text-base sm:text-lg md:text-xl font-medium text-white/80 flex items-center gap-2 mt-0.5">
                 Scalable Digital Solutions &bull; Built with Purpose
               </p>
             </div>
@@ -2032,7 +1976,7 @@
             <!-- CURVED 3D CAROUSEL STAGE -->
             <div class="curved-carousel-stage relative w-full" id="curved-carousel-stage">
               
-              <!-- CENTERPIECE: 3D ROBOT WITH GLOWING ORBITAL RING -->
+              <!-- CENTERPIECE: 3D ROBOT (No black background, No orange ring light) -->
               <div class="curved-robot-centerpiece" id="curved-robot-centerpiece">
                 <div class="robot-floating-wrapper w-full h-full flex items-center justify-center relative z-20">
                   <model-viewer
@@ -2059,10 +2003,6 @@
                     </div>
                   </model-viewer>
                 </div>
-
-                <!-- Ambient Glowing Orbital Ring around Robot Base (Reference Match) -->
-                <div class="orbit-ring-glow"></div>
-                <div class="planet-horizon-glow"></div>
               </div>
 
               <!-- 6 SOFT GLASSMORPHISM CARDS (TRANSITIONED VIA JS 3D TRANSFORM) -->
