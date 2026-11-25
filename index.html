@@ -6,7 +6,7 @@
   <title>Tasnim Tanha — Creative Web Developer</title>
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
   <style>
     @layer base {
@@ -466,11 +466,37 @@
       transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease, border-color 0.6s ease;
       will-change: transform, opacity, box-shadow;
       border-radius: 28px;
-      border: 1.5px solid rgba(255, 90, 0, 0.35);
-      background-color: #1A1D20;
+      border: 1.5px solid rgba(255, 90, 0, 0.45);
+      background: radial-gradient(circle at 82% 70%, rgba(255, 90, 0, 0.08) 0%, transparent 55%), #050505;
       overflow: hidden;
       position: relative;
       transform-style: preserve-3d;
+    }
+    .about-huge-title {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      line-height: 0.86;
+      user-select: none;
+    }
+    .about-huge-title,
+    .about-huge-title span {
+      background: linear-gradient(180deg, #FF7A00 0%, #FF5A00 48%, #C73500 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .about-ambient-glow {
+      position: absolute;
+      inset: -20px -30px;
+      background: radial-gradient(circle at 6% 50%, rgba(255, 90, 0, 0.32) 0%, transparent 45%),
+                  radial-gradient(circle at 94% 50%, rgba(255, 90, 0, 0.3) 0%, transparent 45%),
+                  radial-gradient(circle at 50% 5%, rgba(255, 90, 0, 0.12) 0%, transparent 40%),
+                  radial-gradient(circle at 50% 95%, rgba(255, 90, 0, 0.12) 0%, transparent 40%);
+      filter: blur(35px);
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.9;
     }
     .about-box-card.is-revealed {
       opacity: 1 !important;
@@ -732,11 +758,14 @@
 
         <!-- ======================================================== -->
         <!-- ======================================================== -->
-        <!-- 2. ABOUT SECTION (#about) - EXACT USER MASTER CARD       -->
+        <!-- 2. ABOUT SECTION (#about) - EDITABLE DESIGN REFERENCE   -->
         <!-- ======================================================== -->
         <section class="py-8 sm:py-12 lg:py-16 relative overflow-hidden" id="about">
+          <!-- Ambient Orange Glow behind container -->
+          <div class="about-ambient-glow"></div>
+
           <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 relative z-10" style="perspective: 1200px;">
-            <div id="about-card" class="about-box-card relative w-full max-w-[1050px] mx-auto rounded-[24px] sm:rounded-[28px] overflow-hidden flex items-center justify-center cursor-default select-none border border-[#FF7A00]/40 shadow-2xl">
+            <div id="about-card" class="about-box-card relative w-full max-w-[1050px] mx-auto rounded-[24px] sm:rounded-[28px] overflow-hidden cursor-default select-none border border-[#FF7A00]/40 shadow-2xl">
               
               <!-- SVG Animated Perimeter Border Draw (Item 4) -->
               <svg class="about-border-svg pointer-events-none absolute inset-0 w-full h-full z-20" xmlns="http://www.w3.org/2000/svg">
@@ -748,14 +777,74 @@
                     <stop offset="100%" stop-color="#FF5A00" />
                   </linearGradient>
                 </defs>
-                <rect id="about-border-rect" class="about-border-rect" x="2" y="2" rx="26" ry="26" fill="none" stroke="url(#aboutNeonGrad)" stroke-width="2.5" pathLength="100" />
+                <rect id="about-border-rect" class="about-border-rect" x="2" y="2" rx="26" ry="26" fill="none" stroke="url(#aboutNeonGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" pathLength="100" />
               </svg>
 
               <!-- Periodic Sheen / Light Sweep Reflection (Item 6) -->
               <div class="about-light-sweep"></div>
 
-              <!-- Main Card Graphic Content -->
-              <img src="assets/about-section-exact.png" alt="About Tasnim Tanha - Beyond Code. Driven by Design." class="w-full h-auto select-none pointer-events-none object-contain relative z-10">
+              <!-- ========================================== -->
+              <!-- DESKTOP VIEWPORT (lg:flex & xl)           -->
+              <!-- ========================================== -->
+              <div class="hidden lg:block relative w-full h-[530px] xl:h-[565px] px-10 xl:px-12 pt-8 xl:pt-10 pb-8 z-10">
+                <!-- Large Oversized "ABOUT" Headline -->
+                <div class="absolute top-5 xl:top-6 left-10 xl:left-12 right-10 xl:right-12 z-[5] pointer-events-none">
+                  <h2 class="about-huge-title flex justify-between w-full text-[9.2rem] xl:text-[10.5rem] m-0 leading-[0.84]">
+                    <span>A</span><span>B</span><span>O</span><span>U</span><span>T</span>
+                  </h2>
+                </div>
+
+                <!-- Left Content: Headline, Description & Signature -->
+                <div class="relative z-10 max-w-[420px] xl:max-w-[450px] pt-[175px] xl:pt-[190px] flex flex-col">
+                  <h3 class="text-white font-black uppercase text-[26px] xl:text-[28px] tracking-tight leading-[1.14] mb-3.5 drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
+                    BEYOND CODE.<br>
+                    DRIVEN BY DESIGN.
+                  </h3>
+                  <p class="text-white/85 text-[14px] xl:text-[15px] leading-relaxed font-normal mb-6 max-w-[390px]">
+                    I'm Tasnim Tanha, a Frontend Developer &amp; UI Designer passionate about creating modern, interactive and visually engaging digital experiences.
+                  </p>
+                  <div class="pt-1">
+                    <img src="assets/tasnim-signature-clean.png" alt="Tasnim Tanha Signature" class="w-44 xl:w-48 h-auto object-contain filter drop-shadow-[0_2px_14px_rgba(255,106,0,0.55)]">
+                  </div>
+                </div>
+
+                <!-- Right Content: Portrait Overlapping the Orange Frame and "ABOUT" Text -->
+                <div class="absolute right-7 xl:right-9 bottom-4 xl:bottom-5 w-[49%] max-w-[465px] xl:max-w-[495px] z-10 pointer-events-none">
+                  <img src="assets/about-tasnim-portrait-clean.png" alt="Tasnim Tanha - Frontend Developer &amp; UI Designer" class="w-full h-auto object-contain select-none pointer-events-none filter drop-shadow-[0_15px_35px_rgba(0,0,0,0.85)]">
+                </div>
+              </div>
+
+              <!-- ========================================== -->
+              <!-- TABLET & MOBILE VIEWPORT (< lg)           -->
+              <!-- ========================================== -->
+              <div class="lg:hidden relative w-full px-5 sm:px-8 py-7 sm:py-9 z-10 flex flex-col">
+                <!-- Large Oversized "ABOUT" Headline -->
+                <div class="w-full text-left sm:text-center mb-1">
+                  <h2 class="about-huge-title text-[4.8rem] sm:text-[6.8rem] md:text-[8rem] tracking-[-0.04em] leading-[0.86]">
+                    ABOUT
+                  </h2>
+                </div>
+
+                <!-- Portrait with Orange Frame -->
+                <div class="w-full max-w-[340px] sm:max-w-[390px] mx-auto my-3 sm:my-5 relative z-10">
+                  <img src="assets/about-tasnim-portrait-clean.png" alt="Tasnim Tanha - Frontend Developer &amp; UI Designer" class="w-full h-auto object-contain select-none pointer-events-none filter drop-shadow-[0_12px_28px_rgba(0,0,0,0.85)]">
+                </div>
+
+                <!-- Left Content: Headline, Description & Signature -->
+                <div class="w-full max-w-[440px] mx-auto flex flex-col text-left mt-2">
+                  <h3 class="text-white font-black uppercase text-xl sm:text-2xl tracking-tight leading-[1.15] mb-2.5">
+                    BEYOND CODE.<br>
+                    DRIVEN BY DESIGN.
+                  </h3>
+                  <p class="text-white/85 text-xs sm:text-sm leading-relaxed font-normal mb-4 sm:mb-5">
+                    I'm Tasnim Tanha, a Frontend Developer &amp; UI Designer passionate about creating modern, interactive and visually engaging digital experiences.
+                  </p>
+                  <div class="pt-0.5">
+                    <img src="assets/tasnim-signature-clean.png" alt="Tasnim Tanha Signature" class="w-36 sm:w-42 h-auto object-contain filter drop-shadow-[0_2px_12px_rgba(255,106,0,0.5)]">
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
         </section>
@@ -3549,10 +3638,11 @@
 
       // Update SVG border width & height accurately to card bounds
       function updateSvgDimensions() {
-        const rect = aboutCard.getBoundingClientRect();
-        if (aboutBorderRect && rect.width && rect.height) {
-          aboutBorderRect.setAttribute('width', Math.max(0, rect.width - 4).toFixed(1));
-          aboutBorderRect.setAttribute('height', Math.max(0, rect.height - 4).toFixed(1));
+        const w = aboutCard.offsetWidth;
+        const h = aboutCard.offsetHeight;
+        if (aboutBorderRect && w && h) {
+          aboutBorderRect.setAttribute('width', Math.max(0, w - 4).toFixed(1));
+          aboutBorderRect.setAttribute('height', Math.max(0, h - 4).toFixed(1));
         }
       }
 
