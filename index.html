@@ -693,6 +693,121 @@
     .about-headline-word:hover {
       transform: translateX(4px);
     }
+
+    /* ======================================================== */
+    /* GLOBAL ANIMATIONS: PROGRESS, REVEAL, GLOW & ACCESSIBILITY*/
+    /* ======================================================== */
+    /* 1. Scroll Reading Progress Bar */
+    #reading-progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      z-index: 100;
+      pointer-events: none;
+      transform-origin: 0% 50%;
+      transform: scaleX(0);
+      will-change: transform;
+      background: linear-gradient(90deg, #D86018 0%, #FF7A00 50%, #E879F9 100%);
+      box-shadow: 0 0 10px rgba(255, 122, 0, 0.8), 0 0 18px rgba(232, 121, 249, 0.45);
+      transition: transform 0.06s cubic-bezier(0.1, 0.9, 0.2, 1);
+    }
+
+    /* 2. Global Scroll Reveal & Card Stagger */
+    .scroll-reveal {
+      opacity: 0;
+      transform: translate3d(0, 32px, 0);
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+    .scroll-reveal.is-revealed {
+      opacity: 1 !important;
+      transform: translate3d(0, 0, 0) !important;
+    }
+    .stagger-group .stagger-item {
+      opacity: 0;
+      transform: translate3d(0, 24px, 0);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: calc(var(--stagger-idx, 0) * 0.08s);
+      will-change: opacity, transform;
+    }
+    .stagger-group.is-revealed .stagger-item {
+      opacity: 1 !important;
+      transform: translate3d(0, 0, 0) !important;
+    }
+
+    /* 3. Subtle Glow Pulse for Buttons & Borders */
+    @keyframes glowPulseButton {
+      0%, 100% {
+        box-shadow: 0 0 16px rgba(216, 96, 24, 0.45);
+      }
+      50% {
+        box-shadow: 0 0 28px rgba(255, 122, 0, 0.75), 0 0 45px rgba(216, 96, 24, 0.35);
+      }
+    }
+    .glow-pulse-btn {
+      animation: glowPulseButton 3.8s ease-in-out infinite;
+    }
+    @keyframes borderGlowPulse {
+      0%, 100% {
+        border-color: rgba(255, 122, 0, 0.4);
+        box-shadow: 0 0 15px rgba(255, 90, 0, 0.2);
+      }
+      50% {
+        border-color: rgba(255, 160, 60, 0.8);
+        box-shadow: 0 0 30px rgba(255, 122, 0, 0.5), inset 0 0 15px rgba(255, 90, 0, 0.15);
+      }
+    }
+    .glow-pulse-border {
+      animation: borderGlowPulse 4.2s ease-in-out infinite;
+    }
+
+    /* 4. Smooth Page Transition Veil */
+    #page-transition-curtain {
+      position: fixed;
+      inset: 0;
+      background: #0A0B0D;
+      z-index: 99999;
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #page-transition-curtain.loaded {
+      opacity: 0;
+    }
+
+    /* 5. Reduced Motion Accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .scroll-reveal, 
+      .section-title-reveal, 
+      .section-sub-reveal, 
+      .section-desc-reveal, 
+      .stagger-item, 
+      .timeline-card-item {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+      .glow-pulse-btn, 
+      .glow-pulse-border, 
+      .about-traveling-beam, 
+      .robot-floating-wrapper {
+        animation: none !important;
+      }
+      #reading-progress-bar {
+        display: none !important;
+      }
+      #page-transition-curtain {
+        display: none !important;
+      }
+    }
   </style>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <script id="tailwind-config">
@@ -734,6 +849,12 @@
 </head>
 <body class="bg-[#D86018] font-body-md text-[#E0E2EC] antialiased selection:bg-[#D86018] selection:text-white relative min-h-screen">
 
+  <!-- Top Reading Progress Indicator -->
+  <div id="reading-progress-bar" role="progressbar" aria-label="Reading progress" aria-valuemin="0" aria-valuemax="100"></div>
+
+  <!-- Smooth Page Transition Curtain -->
+  <div id="page-transition-curtain"></div>
+
   <!-- ========================================== -->
   <!-- 1. FIXED BACKGROUND SMOOTH SCROLL ANIMATION -->
   <!-- ========================================== -->
@@ -760,7 +881,7 @@
 
       <!-- Sleek Action CTA Pill Enclosed Inside Navbar Capsule -->
       <div class="flex items-center gap-1.5">
-        <a class="inline-flex items-center justify-center px-4 sm:px-5 py-2 rounded-full bg-gradient-to-r from-[#D86018] via-[#BF3E2C] to-[#521626] hover:from-[#E36A1C] hover:via-[#D86018] hover:to-[#572F53] shadow-[0_0_16px_rgba(216,96,24,0.45)] hover:shadow-[0_0_24px_rgba(216,96,24,0.7)] hover:scale-105 text-white text-xs font-bold uppercase tracking-wider transition-all duration-300 shrink-0" data-path="contact" href="#contact">LET'S TALK</a>
+        <a class="inline-flex items-center justify-center px-4 sm:px-5 py-2 rounded-full bg-gradient-to-r from-[#D86018] via-[#BF3E2C] to-[#521626] hover:from-[#E36A1C] hover:via-[#D86018] hover:to-[#572F53] shadow-[0_0_16px_rgba(216,96,24,0.45)] hover:shadow-[0_0_24px_rgba(216,96,24,0.7)] hover:scale-105 text-white text-xs font-bold uppercase tracking-wider transition-all duration-300 shrink-0 glow-pulse-btn" data-path="contact" href="#contact">LET'S TALK</a>
         <button id="mobile-menu-btn" aria-label="Open menu" class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-colors" type="button" onclick="toggleMobileMenu()">
           <span class="material-symbols-outlined text-[18px]">menu</span>
         </button>
@@ -859,7 +980,7 @@
 
               <!-- Action Buttons with Premium Pantone Gradient & Magnetic Physics -->
               <div class="flex flex-wrap items-center justify-center gap-4 mt-4">
-                <a class="hero-magnetic-btn inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full bg-gradient-to-r from-[#D86018] via-[#BF3E2C] to-[#521626] hover:from-[#E36A1C] hover:via-[#D86018] hover:to-[#572F53] shadow-[0_0_20px_rgba(216,96,24,0.45)] hover:shadow-[0_0_30px_rgba(216,96,24,0.7)] text-white font-label-lg text-xs font-semibold uppercase tracking-wider" href="#projects">
+                <a class="hero-magnetic-btn inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full bg-gradient-to-r from-[#D86018] via-[#BF3E2C] to-[#521626] hover:from-[#E36A1C] hover:via-[#D86018] hover:to-[#572F53] shadow-[0_0_20px_rgba(216,96,24,0.45)] hover:shadow-[0_0_30px_rgba(216,96,24,0.7)] text-white font-label-lg text-xs font-semibold uppercase tracking-wider glow-pulse-btn" href="#projects">
                   <span>Explore Work</span>
                   <span class="material-symbols-outlined text-[16px]">arrow_downward</span>
                 </a>
@@ -1006,7 +1127,7 @@
         <!-- 3. SKILLS SECTION (#skills) - 3D COVER FLOW DECK        -->
         <!-- ======================================================== -->
         <section class="py-8 sm:py-10 lg:py-12 relative overflow-hidden" id="skills">
-          <div class="max-w-7xl mx-auto px-6 lg:px-12">
+          <div class="max-w-7xl mx-auto px-6 lg:px-12 scroll-reveal">
             
             <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
               <div class="flex flex-col gap-2">
@@ -1294,7 +1415,7 @@
           <div class="absolute -top-[120px] -left-[120px] w-[500px] h-[500px] rounded-full border border-[#FF5A00]/20 pointer-events-none opacity-40 blur-[1px]"></div>
           <div class="absolute -bottom-[140px] -right-[140px] w-[620px] h-[620px] rounded-full border border-[#FF5A00]/25 pointer-events-none opacity-50 blur-[1px]"></div>
 
-          <div class="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+          <div class="max-w-7xl mx-auto px-6 lg:px-12 relative z-10 scroll-reveal">
             
             <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-4">
               <div class="flex flex-col gap-1.5">
@@ -1530,7 +1651,7 @@
           <div class="absolute -top-[100px] -right-[100px] w-[500px] h-[500px] rounded-full border border-[#FF5A00]/20 pointer-events-none opacity-40 blur-[1px]"></div>
           <div class="absolute -bottom-[120px] -left-[120px] w-[550px] h-[550px] rounded-full border border-[#FF5A00]/25 pointer-events-none opacity-45 blur-[1px]"></div>
 
-          <div class="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+          <div class="max-w-7xl mx-auto px-6 lg:px-12 relative z-10 scroll-reveal">
             
             <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-2">
               <div class="flex flex-col gap-1.5">
@@ -1725,7 +1846,7 @@
           <div class="absolute -top-[120px] -right-[120px] w-[550px] h-[550px] rounded-full border border-[#FF5A00]/25 pointer-events-none opacity-45 blur-[1px]"></div>
           <div class="absolute -bottom-[120px] -left-[120px] w-[550px] h-[550px] rounded-full border border-[#FF5A00]/25 pointer-events-none opacity-45 blur-[1px]"></div>
 
-          <div class="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+          <div class="max-w-7xl mx-auto px-6 lg:px-12 relative z-10 scroll-reveal">
             
             <!-- Section Header -->
             <div class="flex flex-col gap-1.5 mb-10 sm:mb-12">
@@ -1991,7 +2112,7 @@
           <div class="absolute -top-[120px] -left-[120px] w-[500px] h-[500px] rounded-full border border-[#FF5A00]/20 pointer-events-none opacity-40 blur-[1px]"></div>
           <div class="absolute -bottom-[140px] -right-[140px] w-[620px] h-[620px] rounded-full border border-[#FF5A00]/25 pointer-events-none opacity-50 blur-[1px]"></div>
 
-          <div class="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+          <div class="max-w-7xl mx-auto px-6 lg:px-12 relative z-10 scroll-reveal">
             
             <!-- Left-aligned Header (Fixed from middle to left) -->
             <div class="flex flex-col gap-1.5 mb-4 sm:mb-6">
@@ -2243,7 +2364,7 @@
         <!-- 8. CONTACT SECTION (#contact)                            -->
         <!-- ======================================================== -->
         <section class="py-8 sm:py-10 lg:py-12 relative border-t border-white/10 backdrop-blur-[2px]" id="contact">
-          <div class="max-w-7xl mx-auto px-6 lg:px-12">
+          <div class="max-w-7xl mx-auto px-6 lg:px-12 scroll-reveal">
             
             <div class="flex flex-col gap-2 mb-12">
               <h2 id="contact-heading" class="connect-heading font-display-hero text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)]">
@@ -2306,7 +2427,7 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
-                  <button id="contact-submit-btn" class="contact-magnetic-btn inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-gradient-to-r from-[#D86018] via-[#BF3E2C] to-[#521626] hover:from-[#E36A1C] hover:via-[#D86018] hover:to-[#572F53] text-white font-label-lg text-xs font-semibold uppercase tracking-wider hover:opacity-95 hover:shadow-[0_0_24px_rgba(255,90,0,0.6)] transition-all cursor-pointer" type="submit">
+                  <button id="contact-submit-btn" class="contact-magnetic-btn inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-gradient-to-r from-[#D86018] via-[#BF3E2C] to-[#521626] hover:from-[#E36A1C] hover:via-[#D86018] hover:to-[#572F53] text-white font-label-lg text-xs font-semibold uppercase tracking-wider hover:opacity-95 hover:shadow-[0_0_24px_rgba(255,90,0,0.6)] transition-all cursor-pointer glow-pulse-btn" type="submit">
                     <span>Send Message</span>
                     <span class="material-symbols-outlined text-[16px]">send</span>
                   </button>
@@ -2325,35 +2446,35 @@
                 </div>
 
                 <!-- 6 Clean Icon-Only Glass Buttons (Email + Socials) -->
-                <div class="flex items-center gap-3.5 flex-wrap">
+                <div class="flex items-center gap-3.5 flex-wrap stagger-group">
                   
                   <!-- 0. Email Icon -->
-                  <a aria-label="Email" title="Send Email (yourmoon1524@gmail.com)" class="social-icon-btn w-12 h-12 sm:w-13 sm:h-13 rounded-2xl bg-black/40 border border-white/10 hover:border-[#D86018] hover:bg-[#D86018]/15 hover:shadow-[0_0_24px_rgba(216,96,24,0.45)] transition-all duration-300 flex items-center justify-center group" href="mailto:yourmoon1524@gmail.com">
+                  <a aria-label="Email" title="Send Email (yourmoon1524@gmail.com)" style="--stagger-idx: 0;" class="social-icon-btn stagger-item w-12 h-12 sm:w-13 sm:h-13 rounded-2xl bg-black/40 border border-white/10 hover:border-[#D86018] hover:bg-[#D86018]/15 hover:shadow-[0_0_24px_rgba(216,96,24,0.45)] transition-all duration-300 flex items-center justify-center group" href="mailto:yourmoon1524@gmail.com">
                     <svg class="w-6 h-6 text-[#FF9E66] group-hover:scale-110 group-hover:text-white transition-all fill-current shrink-0" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
                   </a>
 
                   <!-- 1. LinkedIn -->
-                  <a aria-label="LinkedIn" title="LinkedIn" class="social-icon-btn w-12 h-12 sm:w-13 sm:h-13 rounded-2xl bg-black/40 border border-white/10 hover:border-[#0A66C2] hover:bg-[#0A66C2]/15 hover:shadow-[0_0_24px_rgba(10,102,194,0.45)] transition-all duration-300 flex items-center justify-center group" href="https://www.linkedin.com/in/tasnimtanha1515" target="_blank" rel="noopener noreferrer">
+                  <a aria-label="LinkedIn" title="LinkedIn" style="--stagger-idx: 1;" class="social-icon-btn stagger-item w-12 h-12 sm:w-13 sm:h-13 rounded-2xl bg-black/40 border border-white/10 hover:border-[#0A66C2] hover:bg-[#0A66C2]/15 hover:shadow-[0_0_24px_rgba(10,102,194,0.45)] transition-all duration-300 flex items-center justify-center group" href="https://www.linkedin.com/in/tasnimtanha1515" target="_blank" rel="noopener noreferrer">
                     <svg class="w-6 h-6 text-[#0A66C2] group-hover:scale-110 transition-transform fill-current shrink-0" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
                   </a>
 
                   <!-- 2. GitHub -->
-                  <a aria-label="GitHub" title="GitHub" class="social-icon-btn w-12 h-12 sm:w-13 sm:h-13 rounded-2xl bg-black/40 border border-white/10 hover:border-white hover:bg-white/15 hover:shadow-[0_0_24px_rgba(255,255,255,0.35)] transition-all duration-300 flex items-center justify-center group" href="https://github.com/t-tasnim1524" target="_blank" rel="noopener noreferrer">
+                  <a aria-label="GitHub" title="GitHub" style="--stagger-idx: 2;" class="social-icon-btn stagger-item w-12 h-12 sm:w-13 sm:h-13 rounded-2xl bg-black/40 border border-white/10 hover:border-white hover:bg-white/15 hover:shadow-[0_0_24px_rgba(255,255,255,0.35)] transition-all duration-300 flex items-center justify-center group" href="https://github.com/t-tasnim1524" target="_blank" rel="noopener noreferrer">
                     <svg class="w-6 h-6 text-white group-hover:scale-110 transition-transform fill-current shrink-0" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
                   </a>
 
                   <!-- 3. Behance -->
-                  <a aria-label="Behance" title="Behance" class="social-icon-btn w-12 h-12 sm:w-13 sm:h-13 rounded-2xl bg-black/40 border border-white/10 hover:border-[#0057FF] hover:bg-[#0057FF]/15 hover:shadow-[0_0_24px_rgba(0,87,255,0.45)] transition-all duration-300 flex items-center justify-center group" href="https://www.behance.net/tasnimtanha15" target="_blank" rel="noopener noreferrer">
+                  <a aria-label="Behance" title="Behance" style="--stagger-idx: 3;" class="social-icon-btn stagger-item w-12 h-12 sm:w-13 sm:h-13 rounded-2xl bg-black/40 border border-white/10 hover:border-[#0057FF] hover:bg-[#0057FF]/15 hover:shadow-[0_0_24px_rgba(0,87,255,0.45)] transition-all duration-300 flex items-center justify-center group" href="https://www.behance.net/tasnimtanha15" target="_blank" rel="noopener noreferrer">
                     <svg class="w-6 h-6 text-[#0057FF] group-hover:scale-110 transition-transform fill-current shrink-0" viewBox="0 0 24 24"><path d="M22 7h-7v-2h7v2zm1.726 10c-.442 1.297-2.029 3-4.976 3-3.405 0-5.75-2.203-5.75-5.5 0-3.324 2.33-5.5 5.5-5.5 3.326 0 5.4 2.227 5.4 5.5 0 .278-.027.551-.06.82h-8.08c.112 1.492 1.385 2.5 3.19 2.5 1.534 0 2.56-.707 2.87-1.32h1.906zm-7.976-3.5h5.92c-.085-1.336-1.183-2.32-2.92-2.32-1.742 0-2.87.974-3 2.32zm-7.75-4.5c1.8 0 3.1 1.01 3.1 2.64 0 1.02-.55 1.84-1.4 2.24 1.15.39 1.8 1.38 1.8 2.62 0 2.01-1.6 3.5-3.8 3.5h-5.7v-11h6zm-3.5 4.5h3.2c.8 0 1.3-.47 1.3-1.15 0-.71-.5-1.15-1.3-1.15h-3.2v2.3zm0 4.3h3.4c.9 0 1.5-.52 1.5-1.28 0-.75-.6-1.22-1.5-1.22h-3.4v2.5z"/></svg>
                   </a>
 
                   <!-- 4. Instagram -->
-                  <a aria-label="Instagram" title="Instagram" class="social-icon-btn w-12 h-12 sm:w-13 sm:h-13 rounded-2xl bg-black/40 border border-white/10 hover:border-[#E4405F] hover:bg-[#E4405F]/15 hover:shadow-[0_0_24px_rgba(228,64,95,0.45)] transition-all duration-300 flex items-center justify-center group" href="https://www.instagram.com/tales_of_tasnim?bqrl=dmM1Y3Z6cmlzcndr" target="_blank" rel="noopener noreferrer">
+                  <a aria-label="Instagram" title="Instagram" style="--stagger-idx: 4;" class="social-icon-btn stagger-item w-12 h-12 sm:w-13 sm:h-13 rounded-2xl bg-black/40 border border-white/10 hover:border-[#E4405F] hover:bg-[#E4405F]/15 hover:shadow-[0_0_24px_rgba(228,64,95,0.45)] transition-all duration-300 flex items-center justify-center group" href="https://www.instagram.com/tales_of_tasnim?bqrl=dmM1Y3Z6cmlzcndr" target="_blank" rel="noopener noreferrer">
                     <svg class="w-6 h-6 text-[#E4405F] group-hover:scale-110 transition-transform fill-current shrink-0" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                   </a>
 
                   <!-- 5. Facebook -->
-                  <a aria-label="Facebook" title="Facebook" class="social-icon-btn w-12 h-12 sm:w-13 sm:h-13 rounded-2xl bg-black/40 border border-white/10 hover:border-[#1877F2] hover:bg-[#1877F2]/15 hover:shadow-[0_0_24px_rgba(24,119,242,0.45)] transition-all duration-300 flex items-center justify-center group" href="https://www.facebook.com/share/1F4uA3XixD/" target="_blank" rel="noopener noreferrer">
+                  <a aria-label="Facebook" title="Facebook" style="--stagger-idx: 5;" class="social-icon-btn stagger-item w-12 h-12 sm:w-13 sm:h-13 rounded-2xl bg-black/40 border border-white/10 hover:border-[#1877F2] hover:bg-[#1877F2]/15 hover:shadow-[0_0_24px_rgba(24,119,242,0.45)] transition-all duration-300 flex items-center justify-center group" href="https://www.facebook.com/share/1F4uA3XixD/" target="_blank" rel="noopener noreferrer">
                     <svg class="w-6 h-6 text-[#1877F2] group-hover:scale-110 transition-transform fill-current shrink-0" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                   </a>
 
@@ -2556,6 +2677,12 @@
         progress = Math.min(Math.max(scrollY / maxScroll, 0), 1);
       }
       targetFrame = 1 + progress * (TOTAL_FRAMES - 1);
+
+      // 60FPS Hardware-Accelerated Reading Progress Bar
+      const progressBar = document.getElementById('reading-progress-bar');
+      if (progressBar) {
+        progressBar.style.transform = `scaleX(${progress})`;
+      }
     }
 
     function animationLoop() {
@@ -2574,20 +2701,26 @@
       requestAnimationFrame(animationLoop);
     }
 
-    // Initialize Lenis smooth scroll
+    // Initialize Lenis smooth scroll with optimal buttery physics
     if (typeof Lenis !== 'undefined') {
-      const lenis = new Lenis({
-        duration: 1.0,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        smoothWheel: true,
-        smoothTouch: false,
-      });
-      lenis.on('scroll', onScroll);
-      function lenisLoop(time) {
-        lenis.raf(time);
+      const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!isReducedMotion) {
+        const lenis = new Lenis({
+          duration: 1.2,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          smoothWheel: true,
+          wheelMultiplier: 1.0,
+          touchMultiplier: 1.5,
+          infinite: false,
+        });
+        window.lenis = lenis;
+        lenis.on('scroll', onScroll);
+        function lenisLoop(time) {
+          lenis.raf(time);
+          requestAnimationFrame(lenisLoop);
+        }
         requestAnimationFrame(lenisLoop);
       }
-      requestAnimationFrame(lenisLoop);
     }
 
     window.addEventListener('resize', resizeCanvas, { passive: true });
@@ -3981,6 +4114,69 @@
         headerElements.forEach(el => obs.observe(el));
       } else {
         headerElements.forEach(el => el.classList.add('is-revealed'));
+      }
+    })();
+
+    // -------------------------------------------------------------
+    // GLOBAL SMOOTH SCROLL, STAGGER, PAGE TRANSITIONS & ACCESSIBILITY
+    // -------------------------------------------------------------
+    (function initGlobalPageInteractions() {
+      // 1. Initial Page Transition Curtain fade out
+      const curtain = document.getElementById('page-transition-curtain');
+      if (curtain) {
+        window.addEventListener('load', () => {
+          curtain.classList.add('loaded');
+          setTimeout(() => { if (curtain.parentNode) curtain.parentNode.removeChild(curtain); }, 600);
+        });
+        setTimeout(() => {
+          curtain.classList.add('loaded');
+          setTimeout(() => { if (curtain.parentNode) curtain.parentNode.removeChild(curtain); }, 600);
+        }, 700);
+      }
+
+      // 2. Smooth Navigation Glide via Lenis on all Anchor Links
+      document.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', function (e) {
+          const targetId = this.getAttribute('href');
+          if (!targetId || targetId === '#' || targetId.startsWith('#!')) return;
+          const targetEl = document.querySelector(targetId);
+          if (targetEl) {
+            e.preventDefault();
+            if (window.lenis) {
+              window.lenis.scrollTo(targetEl, {
+                offset: -20,
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+              });
+            } else {
+              targetEl.scrollIntoView({ behavior: 'smooth' });
+            }
+          }
+        });
+      });
+
+      // 3. Global Scroll Reveal & Stagger Animation Observer
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.querySelectorAll('.scroll-reveal, .stagger-group').forEach(el => el.classList.add('is-revealed'));
+        return;
+      }
+
+      const revealTargets = document.querySelectorAll('.scroll-reveal, .stagger-group');
+      if (!revealTargets.length) return;
+
+      if ('IntersectionObserver' in window) {
+        const obs = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-revealed');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+        revealTargets.forEach(el => obs.observe(el));
+      } else {
+        revealTargets.forEach(el => el.classList.add('is-revealed'));
       }
     })();
     document.getElementById('footer-year').textContent = new Date().getFullYear();
