@@ -9,16 +9,38 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
   <style>
+    /* Lenis Smooth Scroll Core Styles */
+    html.lenis, html.lenis body {
+      height: auto;
+    }
+    .lenis.lenis-smooth {
+      scroll-behavior: auto !important;
+    }
+    .lenis.lenis-smooth [data-lenis-prevent] {
+      overscroll-behavior: contain;
+    }
+    .lenis.lenis-stopped {
+      overflow: hidden;
+    }
+    .lenis.lenis-smooth iframe {
+      pointer-events: none;
+    }
+
     @layer base {
-      html, body {
+      html {
         margin: 0;
         padding: 0;
-        overflow-x: hidden;
         width: 100%;
-        max-width: 100vw;
+        max-width: 100%;
+        overflow-x: clip;
       }
       body {
-        overscroll-behavior: none;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: clip;
+        overscroll-behavior-y: auto;
       }
       main > :first-child {
         margin-top: 0 !important;
@@ -858,7 +880,7 @@
   <!-- ========================================== -->
   <!-- 1. FIXED BACKGROUND SMOOTH SCROLL ANIMATION -->
   <!-- ========================================== -->
-  <canvas id="animation-canvas" class="fixed inset-0 w-full h-full pointer-events-none" style="z-index: 0;"></canvas>
+  <canvas id="animation-canvas" class="fixed inset-0 w-full h-full pointer-events-none" style="z-index: 0; will-change: transform; transform: translateZ(0);"></canvas>
 
   <!-- Ambient Contrast Vignette (Subtle & Clean to preserve video brilliance) -->
   <div class="fixed inset-0 pointer-events-none" style="z-index: 1; background: radial-gradient(circle at 50% 30%, transparent 65%, rgba(0, 0, 0, 0.28) 100%);"></div>
@@ -2552,7 +2574,7 @@
 
     function resizeCanvas() {
       if (!canvas || !ctx) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
       const w = window.innerWidth;
       const h = window.innerHeight;
 
@@ -2634,37 +2656,65 @@
       if (frames[idx - 1]) return;
       const img = new Image();
       img.src = getFramePath(idx);
-      img.onload = () => {
-        frames[idx - 1] = img;
-        onImageLoaded(idx);
-      };
-      img.onerror = () => {
-        img.src = `../smooth_video_49f0b297_1080p-ezgif-split/ezgif-frame-${String(idx).padStart(3, '0')}.jpg`;
+      if ('decode' in img) {
+        img.decode().then(() => {
+          frames[idx - 1] = img;
+          onImageLoaded(idx);
+        }).catch(() => {
+          img.onload = () => {
+            frames[idx - 1] = img;
+            onImageLoaded(idx);
+          };
+          img.onerror = () => {
+            img.src = `../smooth_video_49f0b297_1080p-ezgif-split/ezgif-frame-${String(idx).padStart(3, '0')}.jpg`;
+            img.onload = () => {
+              frames[idx - 1] = img;
+              onImageLoaded(idx);
+            };
+          };
+        });
+      } else {
         img.onload = () => {
           frames[idx - 1] = img;
           onImageLoaded(idx);
         };
-      };
+        img.onerror = () => {
+          img.src = `../smooth_video_49f0b297_1080p-ezgif-split/ezgif-frame-${String(idx).padStart(3, '0')}.jpg`;
+          img.onload = () => {
+            frames[idx - 1] = img;
+            onImageLoaded(idx);
+          };
+        };
+      }
     }
 
     function preloadFrames() {
       // 1. Prioritize frame 1
       loadFrame(1);
 
-      // 2. Load keyframes across scroll timeline
-      for (let i = 5; i <= TOTAL_FRAMES; i += 4) {
+      // 2. Load keyframes across scroll timeline immediately
+      for (let i = 5; i <= TOTAL_FRAMES; i += 5) {
         loadFrame(i);
       }
       loadFrame(TOTAL_FRAMES);
 
-      // 3. Load remaining intermediate frames in background
-      setTimeout(() => {
-        for (let i = 2; i <= TOTAL_FRAMES; i++) {
-          if (!frames[i - 1]) {
-            loadFrame(i);
+      // 3. Incrementally load remaining intermediate frames in idle batches so network & main thread never spike
+      let nextBatch = 2;
+      function loadNextBatch() {
+        const batchEnd = Math.min(nextBatch + 4, TOTAL_FRAMES);
+        for (let i = nextBatch; i <= batchEnd; i++) {
+          if (!frames[i - 1]) loadFrame(i);
+        }
+        nextBatch = batchEnd + 1;
+        if (nextBatch <= TOTAL_FRAMES) {
+          if ('requestIdleCallback' in window) {
+            requestIdleCallback(loadNextBatch, { timeout: 200 });
+          } else {
+            setTimeout(loadNextBatch, 80);
           }
         }
-      }, 60);
+      }
+      setTimeout(loadNextBatch, 120);
     }
 
     function onScroll(e) {
@@ -2685,10 +2735,33 @@
       }
     }
 
-    function animationLoop() {
+    // Initialize Lenis smooth scroll with optimal buttery physics
+    const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let lenis = null;
+    if (typeof Lenis !== 'undefined' && !isReducedMotion) {
+      lenis = new Lenis({
+        lerp: 0.1, // Smooth linear interpolation: responsive with zero sticky tail
+        wheelMultiplier: 0.95,
+        touchMultiplier: 1.0,
+        smoothWheel: true,
+        smoothTouch: false, // Touch devices use native 120Hz momentum
+        infinite: false,
+      });
+      window.lenis = lenis;
+      lenis.on('scroll', onScroll);
+    } else {
+      window.addEventListener('scroll', onScroll, { passive: true });
+    }
+
+    // Unified 60FPS animation loop for both Lenis and Canvas rendering
+    function unifiedLoop(time) {
+      if (window.lenis) {
+        window.lenis.raf(time);
+      }
+
       const diff = targetFrame - currentFrame;
-      if (Math.abs(diff) > 0.001) {
-        currentFrame += diff * 0.25;
+      if (Math.abs(diff) > 0.005) {
+        currentFrame += diff * 0.45;
       } else {
         currentFrame = targetFrame;
       }
@@ -2698,51 +2771,31 @@
         render(rounded);
       }
 
-      requestAnimationFrame(animationLoop);
-    }
-
-    // Initialize Lenis smooth scroll with optimal buttery physics
-    if (typeof Lenis !== 'undefined') {
-      const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (!isReducedMotion) {
-        const lenis = new Lenis({
-          duration: 1.2,
-          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-          smoothWheel: true,
-          wheelMultiplier: 1.0,
-          touchMultiplier: 1.5,
-          infinite: false,
-        });
-        window.lenis = lenis;
-        lenis.on('scroll', onScroll);
-        function lenisLoop(time) {
-          lenis.raf(time);
-          requestAnimationFrame(lenisLoop);
-        }
-        requestAnimationFrame(lenisLoop);
-      }
+      requestAnimationFrame(unifiedLoop);
     }
 
     window.addEventListener('resize', resizeCanvas, { passive: true });
-    window.addEventListener('scroll', onScroll, { passive: true });
 
     preloadFrames();
     resizeCanvas();
     onScroll();
-    requestAnimationFrame(animationLoop);
+    requestAnimationFrame(unifiedLoop);
 
     // -------------------------------------------------------------
-    // DYNAMIC CAPSULE NAVBAR ACTIVE HIGHLIGHT
+    // DYNAMIC CAPSULE NAVBAR ACTIVE HIGHLIGHT (rAF Throttled)
     // -------------------------------------------------------------
-    window.addEventListener('scroll', () => {
-      const scrollPos = window.scrollY + 200;
+    let navUpdatePending = false;
+    const sContact = document.getElementById('contact');
+    const sServices = document.getElementById('services');
+    const sProjects = document.getElementById('projects');
+    const sSkills = document.getElementById('skills');
+    const sAbout = document.getElementById('about');
+    const navLinks = document.querySelectorAll('.nav-item');
+
+    function updateActiveNav() {
+      navUpdatePending = false;
+      const scrollPos = (window.scrollY || document.documentElement.scrollTop) + 200;
       let activePath = 'home';
-
-      const sContact = document.getElementById('contact');
-      const sServices = document.getElementById('services');
-      const sProjects = document.getElementById('projects');
-      const sSkills = document.getElementById('skills');
-      const sAbout = document.getElementById('about');
 
       if (sContact && scrollPos >= sContact.offsetTop) {
         activePath = 'contact';
@@ -2758,14 +2811,27 @@
         activePath = 'home';
       }
 
-      document.querySelectorAll('.nav-item').forEach(link => {
+      navLinks.forEach(link => {
         if (link.getAttribute('data-path') === activePath) {
           link.classList.add('glass-capsule-active');
         } else {
           link.classList.remove('glass-capsule-active');
         }
       });
-    }, { passive: true });
+    }
+
+    function requestNavUpdate() {
+      if (!navUpdatePending) {
+        navUpdatePending = true;
+        requestAnimationFrame(updateActiveNav);
+      }
+    }
+
+    if (window.lenis) {
+      window.lenis.on('scroll', requestNavUpdate);
+    } else {
+      window.addEventListener('scroll', requestNavUpdate, { passive: true });
+    }
 
     // -------------------------------------------------------------
     // 3D COVER FLOW DECK FOR SKILL FLASHCARDS with Mouse & Touch Drag, 3D Tilt, Focus Transition & Glow
@@ -3055,12 +3121,14 @@
           }
         });
 
-        // Smooth Mouse Wheel Navigation with Pacing & Cooldown
+        // Smooth Horizontal Wheel Navigation (Leaves vertical page scroll 100% smooth)
         let isProcessWheeling = false;
         let processWheelDelta = 0;
         let processWheelResetTimer = null;
 
         processContainer.addEventListener('wheel', e => {
+          // Only shift cards on deliberate horizontal scroll or shift+wheel; never hijack vertical page scroll
+          if (Math.abs(e.deltaX) <= Math.abs(e.deltaY) && !e.shiftKey) return;
           const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
           if (Math.abs(delta) < 12) return;
 
@@ -3586,6 +3654,15 @@
         renderCurvedLayout();
       }, { passive: true });
 
+      // Forward wheel events over 3D robot to smooth page scrolling
+      if (robotModel) {
+        robotModel.addEventListener('wheel', (e) => {
+          if (window.lenis && !e.ctrlKey) {
+            window.lenis.scrollTo(window.lenis.scroll + e.deltaY, { immediate: false });
+          }
+        }, { passive: true });
+      }
+
       // Initial render
       renderCurvedLayout();
     })();
@@ -4041,11 +4118,15 @@
       const nodeDots = document.querySelectorAll('.timeline-node-dot');
       const timelineCards = document.querySelectorAll('.timeline-card-item');
 
-      // Scroll-driven line draw & node glow
+      // Scroll-driven line draw & node glow (rAF Throttled & Batched)
+      let timelinePending = false;
       function handleTimelineScroll() {
         if (!expSection || !drawLines.length) return;
         const rect = expSection.getBoundingClientRect();
         const winHeight = window.innerHeight;
+
+        // Skip calculations if completely off-screen
+        if (rect.bottom < -100 || rect.top > winHeight + 100) return;
         
         // Calculate scroll progress through experience section
         const startOffset = winHeight * 0.75;
@@ -4053,14 +4134,17 @@
         const currentProgress = (startOffset - rect.top) / totalHeight;
         const progress = Math.max(0, Math.min(1, currentProgress));
 
+        // Read phase
+        const dotStates = Array.from(nodeDots).map(dot => dot.getBoundingClientRect().top < winHeight * 0.72);
+
+        // Write phase
         drawLines.forEach(line => {
           line.style.height = `${(progress * 100).toFixed(1)}%`;
         });
 
         // Glowing node dots when line reaches them
-        nodeDots.forEach(dot => {
-          const dotRect = dot.getBoundingClientRect();
-          if (dotRect.top < winHeight * 0.72) {
+        nodeDots.forEach((dot, idx) => {
+          if (dotStates[idx]) {
             dot.style.transform = 'scale(1.28)';
             dot.style.boxShadow = '0 0 18px #FF5A00, 0 0 28px rgba(255, 90, 0, 0.6)';
           } else {
@@ -4070,8 +4154,22 @@
         });
       }
 
-      window.addEventListener('scroll', handleTimelineScroll, { passive: true });
-      window.addEventListener('resize', handleTimelineScroll, { passive: true });
+      function requestTimelineUpdate() {
+        if (!timelinePending) {
+          timelinePending = true;
+          requestAnimationFrame(() => {
+            timelinePending = false;
+            handleTimelineScroll();
+          });
+        }
+      }
+
+      if (window.lenis) {
+        window.lenis.on('scroll', requestTimelineUpdate);
+      } else {
+        window.addEventListener('scroll', requestTimelineUpdate, { passive: true });
+      }
+      window.addEventListener('resize', requestTimelineUpdate, { passive: true });
       handleTimelineScroll();
 
       // Staggered reveal for timeline cards
@@ -4145,8 +4243,7 @@
             if (window.lenis) {
               window.lenis.scrollTo(targetEl, {
                 offset: -20,
-                duration: 1.2,
-                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+                duration: 0.9,
               });
             } else {
               targetEl.scrollIntoView({ behavior: 'smooth' });
