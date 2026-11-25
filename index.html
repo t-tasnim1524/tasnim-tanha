@@ -460,21 +460,14 @@
     /* ======================================================== */
     /* ABOUT SECTION: CLIP-PATH REVEAL, BORDER GLOW & PARALLAX  */
     /* ======================================================== */
-    /* 1. Clip-path Reveal: card reveals smoothly from bottom */
+    /* 1. About Card Container: Always fully visible, beautifully framed */
     .about-box-card {
-      clip-path: inset(0 0 100% 0 round 28px);
-      opacity: 0.05;
-      transition: clip-path 1.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.75s ease;
-      will-change: clip-path, opacity;
       border-radius: 28px;
       border: 1.5px solid rgba(255, 90, 0, 0.4);
       background: radial-gradient(circle at 82% 70%, rgba(255, 90, 0, 0.08) 0%, transparent 55%), #050505;
       box-shadow: 0 0 30px rgba(255, 90, 0, 0.22), 0 25px 60px rgba(0, 0, 0, 0.9);
       overflow: hidden;
       position: relative;
-    }
-    .about-box-card.is-revealed {
-      clip-path: inset(0 0 0% 0 round 28px);
       opacity: 1;
     }
     .about-huge-title {
@@ -784,7 +777,7 @@
           <div class="about-ambient-glow"></div>
 
           <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
-            <div id="about-card" class="about-box-card relative w-full max-w-[1050px] mx-auto rounded-[24px] sm:rounded-[28px] overflow-hidden cursor-default select-none border border-[#FF7A00]/40 shadow-2xl">
+            <div id="about-card" class="about-box-card is-revealed relative w-full max-w-[1050px] mx-auto rounded-[24px] sm:rounded-[28px] overflow-hidden cursor-default select-none border border-[#FF7A00]/40 shadow-2xl">
               
               <!-- SVG Perimeter Border with Traveling Glowing Laser Beam -->
               <svg class="about-border-svg pointer-events-none absolute inset-0 w-full h-full z-20" xmlns="http://www.w3.org/2000/svg">
@@ -811,9 +804,9 @@
                   </filter>
                 </defs>
                 <!-- Static base outline -->
-                <rect id="about-border-rect" class="about-border-rect" x="2" y="2" rx="26" ry="26" fill="none" stroke="url(#aboutNeonGrad)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                <rect id="about-border-rect" class="about-border-rect" x="2" y="2" width="99.6%" height="99.3%" rx="26" ry="26" fill="none" stroke="url(#aboutNeonGrad)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
                 <!-- Dynamic traveling glowing light beam -->
-                <rect id="about-traveling-beam" class="about-traveling-beam" x="2" y="2" rx="26" ry="26" fill="none" stroke="url(#travelingLightGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" pathLength="1000" filter="url(#borderGlowFilter)" />
+                <rect id="about-traveling-beam" class="about-traveling-beam" x="2" y="2" width="99.6%" height="99.3%" rx="26" ry="26" fill="none" stroke="url(#travelingLightGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" pathLength="1000" filter="url(#borderGlowFilter)" />
               </svg>
 
               <!-- ========================================== -->
@@ -3675,7 +3668,7 @@
     })();
 
     // -------------------------------------------------------------
-    // 2. ABOUT SECTION CONTROLLER: REVEAL, TRAVELING BORDER & PARALLAX
+    // 2. ABOUT SECTION CONTROLLER: BORDER DIMENSIONS & DESKTOP PARALLAX
     // -------------------------------------------------------------
     (function initAboutSectionAnimations() {
       const aboutCard = document.getElementById('about-card');
@@ -3683,6 +3676,8 @@
       const travelingBeam = document.getElementById('about-traveling-beam');
       const desktopPortrait = document.getElementById('about-portrait-desktop');
       if (!aboutCard) return;
+
+      aboutCard.classList.add('is-revealed');
 
       // Update SVG perimeter border rects accurately to card bounds
       function updateSvgDimensions() {
@@ -3702,35 +3697,13 @@
         }
       }
 
-      // 1. Clip-path Reveal: Trigger card reveal
-      function triggerCardReveal() {
-        if (!aboutCard.classList.contains('is-revealed')) {
-          aboutCard.classList.add('is-revealed');
-          updateSvgDimensions();
-        }
-      }
+      updateSvgDimensions();
+      window.addEventListener('resize', updateSvgDimensions, { passive: true });
+      setTimeout(updateSvgDimensions, 100);
+      setTimeout(updateSvgDimensions, 400);
+      setTimeout(updateSvgDimensions, 1000);
 
-      if ('IntersectionObserver' in window) {
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              triggerCardReveal();
-              observer.unobserve(entry.target);
-            }
-          });
-        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-        observer.observe(aboutCard);
-      } else {
-        triggerCardReveal();
-      }
-
-      // Viewport check immediately on load
-      const initialRect = aboutCard.getBoundingClientRect();
-      if (initialRect.top < window.innerHeight && initialRect.bottom > 0) {
-        triggerCardReveal();
-      }
-
-      // 2. Interactive Smooth Depth Parallax on Portrait
+      // Interactive Smooth Depth Parallax on Portrait
       if (desktopPortrait && window.matchMedia('(min-width: 1024px)').matches) {
         let mouseX = 0, mouseY = 0;
         let curX = 0, curY = 0;
@@ -3754,7 +3727,6 @@
           const rect = aboutCard.getBoundingClientRect();
           const cx = rect.left + rect.width / 2;
           const cy = rect.top + rect.height / 2;
-          // Subtly shift portrait (+-12px X, +-9px Y) relative to card center
           mouseX = ((e.clientX - cx) / (rect.width / 2)) * 12;
           mouseY = ((e.clientY - cy) / (rect.height / 2)) * 9;
 
@@ -3768,11 +3740,6 @@
           if (!rafId) rafId = requestAnimationFrame(updateParallax);
         });
       }
-
-      window.addEventListener('resize', updateSvgDimensions, { passive: true });
-      updateSvgDimensions();
-      setTimeout(updateSvgDimensions, 250);
-      setTimeout(updateSvgDimensions, 800);
     })();
 
     // -------------------------------------------------------------
