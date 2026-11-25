@@ -125,13 +125,6 @@
       border-radius: 9999px;
       box-shadow: 0 0 25px rgba(255, 90, 0, 0.6);
     }
-    .robot-center-stage {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
     .robot-floating-wrapper {
       animation: robotGentleFloat 5s ease-in-out infinite;
       will-change: transform;
@@ -142,29 +135,6 @@
       }
       50% {
         transform: translateY(-8px);
-      }
-    }
-    .robot-neon-pedestal {
-      position: absolute;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 220px;
-      height: 24px;
-      border-radius: 50%;
-      background: radial-gradient(ellipse at center, rgba(255, 90, 0, 0.75) 0%, rgba(255, 90, 0, 0.25) 45%, transparent 75%);
-      filter: blur(6px);
-      pointer-events: none;
-      animation: pedestalPulse 5s ease-in-out infinite;
-    }
-    @keyframes pedestalPulse {
-      0%, 100% {
-        transform: translateX(-50%) scale(1);
-        opacity: 0.85;
-      }
-      50% {
-        transform: translateX(-50%) scale(0.9);
-        opacity: 0.55;
       }
     }
 
@@ -2045,22 +2015,12 @@
                 </div>
 
                 <!-- ========================================== -->
-                <!-- MIDDLE COLUMN: 3D CYBER ROBOT STAGE        -->
+                <!-- MIDDLE COLUMN: 3D CYBER ROBOT (SEAMLESS)   -->
                 <!-- ========================================== -->
                 <div class="lg:col-span-4 flex flex-col items-center justify-center order-1 lg:order-2 my-2 lg:my-0">
-                  <div class="robot-center-stage relative w-full max-w-[340px] xl:max-w-[370px] h-[480px] sm:h-[530px] rounded-3xl bg-gradient-to-b from-[#18181B]/85 via-[#101012]/92 to-[#09090B] border border-[#FF5A00]/35 shadow-[0_0_45px_rgba(255,90,0,0.2)] p-3 overflow-hidden flex flex-col items-center justify-center group">
-                    <!-- Ambient cyber background glow -->
-                    <div class="absolute inset-0 bg-radial from-[#FF5A00]/15 via-transparent to-transparent pointer-events-none blur-2xl"></div>
-                    <div class="absolute -top-10 -right-10 w-44 h-44 rounded-full bg-[#38BDF8]/10 blur-3xl pointer-events-none"></div>
-
-                    <!-- Top Badge -->
-                    <div class="absolute top-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 border border-[#FF5A00]/40 backdrop-blur-md shadow-lg pointer-events-none">
-                      <span class="w-2 h-2 rounded-full bg-[#FF5A00] animate-pulse"></span>
-                      <span class="text-[11px] font-label-code text-[#FFE5BE] font-bold uppercase tracking-wider">3D Cyber Robot</span>
-                    </div>
-
-                    <!-- Floating Robot 3D Canvas -->
-                    <div class="robot-floating-wrapper w-full h-[380px] sm:h-[430px] flex items-center justify-center relative z-10">
+                  <div class="relative w-full max-w-[360px] xl:max-w-[400px] h-[480px] sm:h-[530px] flex items-center justify-center">
+                    <!-- Floating Robot 3D Canvas (Clean floating, no black background screen/card) -->
+                    <div class="robot-floating-wrapper w-full h-full flex items-center justify-center relative z-10">
                       <model-viewer
                         id="robot-3d-model"
                         src="assets/3d_robot.glb"
@@ -2071,7 +2031,7 @@
                         camera-controls
                         touch-action="pan-y"
                         disable-zoom
-                        shadow-intensity="1.6"
+                        shadow-intensity="1.5"
                         shadow-softness="0.75"
                         exposure="1.2"
                         camera-orbit="0deg 75deg 105%"
@@ -2084,16 +2044,6 @@
                           <span class="text-xs font-label-code text-[#FFE5BE] tracking-widest uppercase">Loading 3D Robot...</span>
                         </div>
                       </model-viewer>
-                    </div>
-
-                    <!-- Glowing Futuristic Pedestal -->
-                    <div class="robot-neon-pedestal"></div>
-                    <div class="absolute bottom-6 w-[200px] h-[22px] rounded-full border border-[#FF5A00]/40 bg-gradient-to-r from-transparent via-[#FF5A00]/25 to-transparent pointer-events-none shadow-[0_0_25px_#FF5A00]"></div>
-
-                    <!-- Interactive Hint Bottom Badge -->
-                    <div class="absolute bottom-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/70 border border-white/10 backdrop-blur-md pointer-events-none text-white/70 text-[10px] font-label-code uppercase tracking-wider">
-                      <span class="material-symbols-outlined text-[14px] text-[#FF5A00]">3d_rotation</span>
-                      <span>Drag to Rotate 360&deg;</span>
                     </div>
                   </div>
                 </div>
