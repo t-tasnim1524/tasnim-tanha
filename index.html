@@ -3043,9 +3043,138 @@
     }
 
     // -------------------------------------------------------------
+    // AUTOMATIC CAROUSEL AUTOPLAY CONTROLLER (VIEWPORT + INTERACTION AWARE)
+    // -------------------------------------------------------------
+    function setupCarouselAutoplay(options) {
+      const {
+        sectionId,
+        containerId,
+        onNext,
+        interval = 4000,
+        pauseDuration = 6000
+      } = options;
+
+      const sectionEl = document.getElementById(sectionId);
+      const containerEl = document.getElementById(containerId) || sectionEl;
+      if (!sectionEl || typeof onNext !== 'function') return null;
+
+      // Honor user accessibility preference for reduced motion
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return null;
+      }
+
+      let timer = null;
+      let resumeTimer = null;
+      let isInView = false;
+      let isHovered = false;
+      let isInteracting = false;
+
+      function step() {
+        if (isInView && !isHovered && !isInteracting && document.visibilityState === 'visible') {
+          onNext();
+        }
+      }
+
+      function start() {
+        if (timer) clearInterval(timer);
+        timer = setInterval(step, interval);
+      }
+
+      function stop() {
+        if (timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+      }
+
+      function pauseTemporarily(duration = pauseDuration) {
+        isInteracting = true;
+        stop();
+        clearTimeout(resumeTimer);
+        resumeTimer = setTimeout(() => {
+          isInteracting = false;
+          if (isInView && !isHovered && !document.hidden) {
+            start();
+          }
+        }, duration);
+      }
+
+      // 1. Viewport visibility detection via IntersectionObserver
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            isInView = entry.isIntersecting;
+            if (isInView) {
+              if (!isHovered && !isInteracting && !document.hidden) {
+                start();
+              }
+            } else {
+              stop();
+            }
+          });
+        }, { threshold: 0.20 });
+
+        observer.observe(sectionEl);
+      } else {
+        isInView = true;
+        start();
+      }
+
+      // 2. Hover detection: pause while mouse is actively over container, resume on leave
+      if (containerEl) {
+        containerEl.addEventListener('mouseenter', () => {
+          isHovered = true;
+          stop();
+        });
+
+        containerEl.addEventListener('mouseleave', () => {
+          isHovered = false;
+          if (isInView && !isInteracting && !document.hidden) {
+            start();
+          }
+        });
+
+        // 3. Manual interaction: pause on pointerdown or touchstart
+        containerEl.addEventListener('pointerdown', () => {
+          pauseTemporarily(pauseDuration);
+        }, { passive: true });
+
+        containerEl.addEventListener('touchstart', () => {
+          pauseTemporarily(pauseDuration);
+        }, { passive: true });
+      }
+
+      // Reset hover state if user scrolls past (avoid passive cursor traps)
+      window.addEventListener('scroll', () => {
+        if (isHovered && !isInteracting) {
+          isHovered = false;
+          if (isInView && !document.hidden) {
+            start();
+          }
+        }
+      }, { passive: true });
+
+      // 4. Tab visibility awareness: pause when tab is hidden, resume when active
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          stop();
+        } else if (isInView && !isHovered && !isInteracting) {
+          start();
+        }
+      });
+
+      return {
+        start,
+        stop,
+        pauseTemporarily
+      };
+    }
+
+    // -------------------------------------------------------------
     // 3D COVER FLOW DECK FOR SKILL FLASHCARDS with Mouse & Touch Drag, 3D Tilt, Focus Transition & Glow
     // -------------------------------------------------------------
     let activeSkillIndex = 2;
+    let skillAutoplay = null;
     const skillCards = document.querySelectorAll('.skill-fan-card');
     const TOTAL_SKILL_CARDS = skillCards.length;
 
@@ -3059,7 +3188,9 @@
       const centerScale = isMobile ? 1.02 : (isTablet ? 1.06 : 1.10);
 
       skillCards.forEach((card, idx) => {
-        const offset = idx - activeSkillIndex;
+        let offset = idx - activeSkillIndex;
+        if (offset > TOTAL_SKILL_CARDS / 2) offset -= TOTAL_SKILL_CARDS;
+        if (offset < -TOTAL_SKILL_CARDS / 2) offset += TOTAL_SKILL_CARDS;
         const absOffset = Math.abs(offset);
 
         if (absOffset > 2 || (isMobile && absOffset === 2)) {
@@ -3127,14 +3258,17 @@
     }
 
     let skillDragCooldown = false;
-    window.setSkillCard = function (index) {
+    window.setSkillCard = function (index, isUserAction = true) {
       if (skillDragCooldown) return;
-      activeSkillIndex = Math.max(0, Math.min(TOTAL_SKILL_CARDS - 1, index));
+      activeSkillIndex = (index + TOTAL_SKILL_CARDS) % TOTAL_SKILL_CARDS;
       updateSkillDeck();
+      if (isUserAction && skillAutoplay) {
+        skillAutoplay.pauseTemporarily(6000);
+      }
     };
 
-    window.shiftSkillCard = function (direction) {
-      setSkillCard(activeSkillIndex + direction);
+    window.shiftSkillCard = function (direction, isUserAction = true) {
+      setSkillCard(activeSkillIndex + direction, isUserAction);
     };
 
     const skillContainer = document.getElementById('skill-deck-container');
@@ -3149,7 +3283,7 @@
         skillContainer.classList.remove('is-dragging');
         const diff = touchStartX - e.changedTouches[0].screenX;
         if (Math.abs(diff) > 30) {
-          shiftSkillCard(diff > 0 ? 1 : -1);
+          shiftSkillCard(diff > 0 ? 1 : -1, true);
         }
       }, { passive: true });
 
@@ -3176,7 +3310,7 @@
         skillContainer.classList.remove('is-dragging');
         if (Math.abs(totalDragDiff) > 35) {
           skillDragCooldown = true;
-          shiftSkillCard(totalDragDiff > 0 ? 1 : -1);
+          shiftSkillCard(totalDragDiff > 0 ? 1 : -1, true);
           setTimeout(() => { skillDragCooldown = false; }, 300);
         }
       });
@@ -3211,11 +3345,20 @@
     window.addEventListener('resize', updateSkillDeck, { passive: true });
     updateSkillDeck();
 
+    skillAutoplay = setupCarouselAutoplay({
+      sectionId: 'skills',
+      containerId: 'skill-deck-container',
+      onNext: () => shiftSkillCard(1, false),
+      interval: 4000,
+      pauseDuration: 6000
+    });
+
     // -------------------------------------------------------------
     // 3D CYLINDRICAL HORIZON DECK FOR HOW I WORK
     // -------------------------------------------------------------
     (function initProcessHorizon() {
       let activeProcessIndex = 1; // Default to Stage 02: Design
+      let processAutoplay = null;
       const processCards = document.querySelectorAll('.process-horizon-card');
       const TOTAL_PROCESS = processCards.length;
 
@@ -3269,13 +3412,16 @@
         });
       }
 
-      window.setProcessCard = function (index) {
+      window.setProcessCard = function (index, isUserAction = true) {
         activeProcessIndex = (index + TOTAL_PROCESS) % TOTAL_PROCESS;
         updateProcessDeck();
+        if (isUserAction && processAutoplay) {
+          processAutoplay.pauseTemporarily(6000);
+        }
       };
 
-      window.shiftProcessDeck = function (direction) {
-        setProcessCard(activeProcessIndex + direction);
+      window.shiftProcessDeck = function (direction, isUserAction = true) {
+        setProcessCard(activeProcessIndex + direction, isUserAction);
       };
 
       const prevBtn = document.getElementById('process-prev-btn');
@@ -3283,20 +3429,20 @@
       if (prevBtn) {
         prevBtn.onclick = function(e) {
           e.preventDefault();
-          shiftProcessDeck(-1);
+          shiftProcessDeck(-1, true);
         };
       }
       if (nextBtn) {
         nextBtn.onclick = function(e) {
           e.preventDefault();
-          shiftProcessDeck(1);
+          shiftProcessDeck(1, true);
         };
       }
 
       // Direct card click
       processCards.forEach((card, idx) => {
         card.onclick = function() {
-          setProcessCard(idx);
+          setProcessCard(idx, true);
         };
       });
 
@@ -3310,7 +3456,7 @@
         processContainer.addEventListener('touchend', e => {
           const diff = touchStartX - e.changedTouches[0].screenX;
           if (Math.abs(diff) > 25) {
-            shiftProcessDeck(diff > 0 ? 1 : -1);
+            shiftProcessDeck(diff > 0 ? 1 : -1, true);
           }
         }, { passive: true });
 
@@ -3326,7 +3472,7 @@
           isMouseDown = false;
           const diff = mouseStartX - e.clientX;
           if (Math.abs(diff) > 30) {
-            shiftProcessDeck(diff > 0 ? 1 : -1);
+            shiftProcessDeck(diff > 0 ? 1 : -1, true);
           }
         });
 
@@ -3348,7 +3494,7 @@
           if (Math.abs(processWheelDelta) >= 40) {
             isProcessWheeling = true;
             const direction = processWheelDelta > 0 ? 1 : -1;
-            shiftProcessDeck(direction);
+            shiftProcessDeck(direction, true);
             processWheelDelta = 0;
             setTimeout(() => {
               isProcessWheeling = false;
@@ -3365,6 +3511,14 @@
 
       window.addEventListener('resize', updateProcessDeck, { passive: true });
       updateProcessDeck();
+
+      processAutoplay = setupCarouselAutoplay({
+        sectionId: 'process',
+        containerId: 'process-deck-container',
+        onNext: () => shiftProcessDeck(1, false),
+        interval: 3800,
+        pauseDuration: 6000
+      });
     })();
     // FANNED FOLDER DECK FOR FEATURED PROJECTS (Animation Stack 1 to 6)
     // -------------------------------------------------------------
@@ -3497,10 +3651,15 @@
         1: 'https://palmpay-gfmm.onrender.com/login'
       };
 
-      window.setProjectDeck = function(idx) {
+      let projectAutoplay = null;
+
+      window.setProjectDeck = function(idx, isUserAction = true) {
         if (isCooldown || hasDragged) return;
         activeProjectIndex = (idx + TOTAL_PROJECTS) % TOTAL_PROJECTS;
         updateProjectDeck();
+        if (isUserAction && projectAutoplay) {
+          projectAutoplay.pauseTemporarily(6000);
+        }
 
         const url = PROJECT_URLS[idx];
         if (url) {
@@ -3508,10 +3667,13 @@
         }
       };
 
-      window.shiftProjectDeck = function(dir) {
+      window.shiftProjectDeck = function(dir, isUserAction = true) {
         if (isCooldown) return;
         activeProjectIndex = (activeProjectIndex + dir + TOTAL_PROJECTS) % TOTAL_PROJECTS;
         updateProjectDeck();
+        if (isUserAction && projectAutoplay) {
+          projectAutoplay.pauseTemporarily(6000);
+        }
       };
 
       // 4. Mouse Interaction: Drag-to-Rotate + Mouse Parallax
@@ -3572,7 +3734,7 @@
 
         if (Math.abs(dragDiffX) > 35 || velocity > 0.35) {
           isCooldown = true;
-          shiftProjectDeck(dragDiffX < 0 ? 1 : -1);
+          shiftProjectDeck(dragDiffX < 0 ? 1 : -1, true);
           setTimeout(() => {
             isCooldown = false;
             hasDragged = false;
@@ -3615,7 +3777,7 @@
 
         if (Math.abs(dragDiffX) > 30 || velocity > 0.32) {
           isCooldown = true;
-          shiftProjectDeck(dragDiffX < 0 ? 1 : -1);
+          shiftProjectDeck(dragDiffX < 0 ? 1 : -1, true);
           setTimeout(() => {
             isCooldown = false;
             hasDragged = false;
@@ -3627,6 +3789,14 @@
       }, { passive: true });
 
       window.addEventListener('resize', updateProjectDeck, { passive: true });
+
+      projectAutoplay = setupCarouselAutoplay({
+        sectionId: 'projects',
+        containerId: 'project-deck-wrapper',
+        onNext: () => shiftProjectDeck(1, false),
+        interval: 4200,
+        pauseDuration: 6000
+      });
     })();
 
     // -------------------------------------------------------------
@@ -3820,9 +3990,14 @@
         }
       }
 
-      function goToCard(index) {
+      let servicesAutoplay = null;
+
+      function goToCard(index, isUserAction = false) {
         activeIndex = (index + N) % N;
         renderCurvedLayout();
+        if (isUserAction && servicesAutoplay) {
+          servicesAutoplay.pauseTemporarily(6000);
+        }
       }
 
       // Card click handlers: clicking any card rotates it to active focus
@@ -3830,7 +4005,7 @@
         card.addEventListener('click', (e) => {
           const idx = parseInt(card.getAttribute('data-card-index'), 10);
           if (!isNaN(idx) && idx !== activeIndex) {
-            goToCard(idx);
+            goToCard(idx, true);
           }
         });
       });
@@ -3850,13 +4025,34 @@
           const diff = touchEndX - touchStartX;
           if (Math.abs(diff) > 40) {
             if (diff < 0) {
-              goToCard(activeIndex + 1);
+              goToCard(activeIndex + 1, true);
             } else {
-              goToCard(activeIndex - 1);
+              goToCard(activeIndex - 1, true);
             }
           }
         }
       }, { passive: true });
+
+      // Mouse drag gestures
+      let isMouseDragging = false;
+      let mouseStartX = 0;
+      stage.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        isMouseDragging = true;
+        mouseStartX = e.clientX;
+      });
+      window.addEventListener('mouseup', (e) => {
+        if (!isMouseDragging) return;
+        isMouseDragging = false;
+        const diff = e.clientX - mouseStartX;
+        if (Math.abs(diff) > 45) {
+          if (diff < 0) {
+            goToCard(activeIndex + 1, true);
+          } else {
+            goToCard(activeIndex - 1, true);
+          }
+        }
+      });
 
       // Window resize re-calculation
       window.addEventListener('resize', () => {
@@ -3874,6 +4070,14 @@
 
       // Initial render
       renderCurvedLayout();
+
+      servicesAutoplay = setupCarouselAutoplay({
+        sectionId: 'services',
+        containerId: 'curved-carousel-stage',
+        onNext: () => goToCard(activeIndex + 1, false),
+        interval: 4000,
+        pauseDuration: 6000
+      });
     })();
 
     // -------------------------------------------------------------
