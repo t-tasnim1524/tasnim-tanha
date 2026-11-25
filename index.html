@@ -88,51 +88,84 @@
       border-color: #FF9E66 !important;
     }
 
-    /* 3D Horizon Carousel for Services (What I Do) */
-    #services-wheel-container {
-      cursor: grab;
-      user-select: none;
-      touch-action: pan-y;
-      transform-style: preserve-3d;
-    }
-    #services-wheel-container.is-dragging {
-      cursor: grabbing;
-    }
-    .wheel-card, .services-wheel-card {
-      position: absolute;
-      transition: transform 0.48s cubic-bezier(0.2, 0.85, 0.3, 1), opacity 0.45s ease, box-shadow 0.4s ease, border-color 0.4s ease, filter 0.4s ease;
-      transform-style: preserve-3d;
-      will-change: transform, opacity, box-shadow;
+    /* ======================================================== */
+    /* WHAT I DO SECTION: 3D ROBOT CENTER + 3 LEFT & 3 RIGHT CAROUSEL CARDS */
+    /* ======================================================== */
+    .service-carousel-card {
+      position: relative;
+      border-radius: 22px;
+      transition: transform 0.38s cubic-bezier(0.2, 0.85, 0.3, 1), box-shadow 0.38s ease, border-color 0.38s ease, filter 0.38s ease;
+      will-change: transform, box-shadow;
       cursor: pointer;
       user-select: none;
-      background-color: #1A1D20;
+      backdrop-filter: blur(12px);
     }
-    @keyframes gradientBorderPulse {
+    .service-carousel-card:hover {
+      transform: translateY(-4px) scale(1.02);
+    }
+    .service-carousel-card.is-active {
+      animation: serviceCardGlowPulse 2.8s ease-in-out infinite;
+    }
+    @keyframes serviceCardGlowPulse {
       0%, 100% {
+        box-shadow: 0 0 25px rgba(255, 90, 0, 0.5), 0 15px 35px rgba(0, 0, 0, 0.85);
         border-color: #FF7A00;
-        box-shadow: 0 0 35px rgba(255, 90, 0, 0.7), 0 20px 50px rgba(0, 0, 0, 0.95);
       }
       50% {
-        border-color: #FF9E66;
-        box-shadow: 0 0 55px rgba(255, 122, 0, 0.9), 0 20px 50px rgba(0, 0, 0, 0.95);
+        box-shadow: 0 0 45px rgba(255, 122, 0, 0.8), 0 15px 35px rgba(0, 0, 0, 0.85);
+        border-color: #FFAE70;
       }
-    }
-    .services-wheel-card.is-active {
-      animation: gradientBorderPulse 3s ease-in-out infinite;
-    }
-    .services-wheel-card:hover {
-      border-color: #FF7A00 !important;
     }
     .service-icon-box {
       transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), border-radius 0.45s ease, background-color 0.45s ease, box-shadow 0.45s ease;
       will-change: transform, border-radius;
     }
-    .services-wheel-card:hover .service-icon-box {
-      transform: scale(1.18) rotate(10deg);
+    .service-carousel-card:hover .service-icon-box {
+      transform: scale(1.15) rotate(8deg);
       border-radius: 9999px;
-      background-color: rgba(255, 90, 0, 0.25) !important;
-      border-color: #FF7A00 !important;
       box-shadow: 0 0 25px rgba(255, 90, 0, 0.6);
+    }
+    .robot-center-stage {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .robot-floating-wrapper {
+      animation: robotGentleFloat 5s ease-in-out infinite;
+      will-change: transform;
+    }
+    @keyframes robotGentleFloat {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+    .robot-neon-pedestal {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 220px;
+      height: 24px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(255, 90, 0, 0.75) 0%, rgba(255, 90, 0, 0.25) 45%, transparent 75%);
+      filter: blur(6px);
+      pointer-events: none;
+      animation: pedestalPulse 5s ease-in-out infinite;
+    }
+    @keyframes pedestalPulse {
+      0%, 100% {
+        transform: translateX(-50%) scale(1);
+        opacity: 0.85;
+      }
+      50% {
+        transform: translateX(-50%) scale(0.9);
+        opacity: 0.55;
+      }
     }
 
     /* 3D Cylindrical Horizon Ribbon & Process Stages (How I Work) */
@@ -620,6 +653,7 @@
   </script>
   <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 </head>
 <body class="bg-[#D86018] font-body-md text-[#E0E2EC] antialiased selection:bg-[#D86018] selection:text-white relative min-h-screen">
 
@@ -1895,206 +1929,274 @@
                 </p>
               </div>
 
-              <!-- Vertical Rolling Drum Controls (Up / Down) -->
+              <!-- Carousel Controls (Left / Right) -->
               <div class="flex items-center gap-3">
                 <button id="services-prev-btn" aria-label="Previous service" class="w-11 h-11 rounded-full bg-[#18181B]/90 border border-white/20 hover:border-[#FF5A00] hover:bg-[#FF5A00]/10 flex items-center justify-center transition-all text-white shadow-xl cursor-pointer active:scale-95" type="button">
-                  <span class="material-symbols-outlined text-[24px]">keyboard_arrow_up</span>
+                  <span class="material-symbols-outlined text-[24px]">chevron_left</span>
                 </button>
                 <button id="services-next-btn" aria-label="Next service" class="w-11 h-11 rounded-full bg-[#18181B]/90 border border-white/20 hover:border-[#FF5A00] hover:bg-[#FF5A00]/10 flex items-center justify-center transition-all text-white shadow-xl cursor-pointer active:scale-95" type="button">
-                  <span class="material-symbols-outlined text-[24px]">keyboard_arrow_down</span>
+                  <span class="material-symbols-outlined text-[24px]">chevron_right</span>
                 </button>
               </div>
             </div>
 
-            <!-- VERTICAL 3D CYLINDRICAL ROLLING DRUM (1 Center, 2 Above, 2 Below) -->
-            <div class="relative w-full py-6 my-2 flex items-center justify-center overflow-visible min-h-[500px] sm:min-h-[540px]" style="perspective: 1400px; transform-style: preserve-3d;">
-              <div id="services-wheel-container" class="relative w-full max-w-[760px] h-[190px] sm:h-[200px] flex items-center justify-center cursor-pointer select-none" style="transform-style: preserve-3d;">
+            <!-- 3D ROBOT CENTER + 3 LEFT & 3 RIGHT CAROUSEL CARDS -->
+            <div class="relative w-full py-4 my-2">
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-center">
 
-                <!-- Service 01: Responsive Web Design (Gunpowder Slate & Cool Cyan) -->
-                <article class="services-wheel-card absolute w-[92vw] max-w-[720px] h-[175px] sm:h-[190px] md:h-[200px] rounded-[26px] bg-gradient-to-b from-[#24292E] via-[#1A1D20] to-[#101214] border border-[#38BDF8]/40 text-white overflow-hidden shadow-2xl flex items-center justify-between p-5 sm:p-6 md:p-7 cursor-pointer select-none transition-all duration-500" data-service-index="0">
-                  <div class="flex flex-col justify-between h-full max-w-[62%] z-10">
-                    <div>
-                      <div class="inline-flex items-center px-3 py-0.5 rounded-full bg-[#1A1D20] border border-[#38BDF8]/60 text-[10px] font-label-code text-[#7DD3FC] font-semibold mb-1.5 sm:mb-2">
-                        SERVICE 01
+                <!-- ========================================== -->
+                <!-- LEFT COLUMN: 3 CAROUSEL CARDS (1, 2, 3)    -->
+                <!-- ========================================== -->
+                <div class="lg:col-span-4 flex flex-col gap-4 order-2 lg:order-1">
+                  
+                  <!-- Service 01: Responsive Web Design -->
+                  <article class="service-carousel-card relative w-full rounded-2xl bg-gradient-to-br from-[#24292E]/90 via-[#1A1D20]/95 to-[#101214]/95 border border-[#38BDF8]/40 hover:border-[#38BDF8] p-4 sm:p-5 shadow-xl flex items-center justify-between transition-all duration-300 group" data-service-index="0">
+                    <div class="flex flex-col justify-between h-full pr-2.5 z-10 flex-1">
+                      <div>
+                        <div class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#1A1D20] border border-[#38BDF8]/60 text-[10px] font-label-code text-[#7DD3FC] font-semibold mb-1">
+                          SERVICE 01
+                        </div>
+                        <h3 class="font-display-hero text-base sm:text-lg font-bold text-white tracking-tight leading-snug group-hover:text-[#38BDF8] transition-colors">
+                          Responsive Web Design
+                        </h3>
+                        <p class="text-xs text-white/70 line-clamp-2 mt-1 leading-relaxed">
+                          Crafting layouts that adapt fluidly across smartphones, high-DPI laptops, and ultra-wide screens.
+                        </p>
                       </div>
-                      <h3 class="font-display-hero text-xl sm:text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-snug">
-                        Responsive Web Design
-                      </h3>
-                      <p class="text-xs sm:text-sm text-white/70 line-clamp-2 mt-1">
-                        Crafting websites that render impeccably across smartphones, tablets, high-DPI laptops, and ultra-wide desktop monitors.
-                      </p>
-                    </div>
-
-                    <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap pt-1.5">
-                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] sm:text-[11px] font-label-code text-white/80">
-                        <span class="text-[#38BDF8]">≈</span> Fluid CSS
-                      </span>
-                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] sm:text-[11px] font-label-code text-white/80">
-                        <span class="text-[#38BDF8]">📱</span> Mobile-First
-                      </span>
-                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] sm:text-[11px] font-label-code text-white/80">
-                        <span class="text-[#7DD3FC]">⚡</span> Modern UI
-                      </span>
-                    </div>
-                  </div>
-
-                  <div class="relative flex items-center justify-end w-[35%] h-full">
-                    <div class="service-icon-box w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#38BDF8]/15 border border-[#38BDF8]/35 flex items-center justify-center mr-3 sm:mr-4">
-                      <span class="material-symbols-outlined text-[#38BDF8] text-[32px] sm:text-[38px]">devices</span>
-                    </div>
-                    <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#38BDF8] text-white flex items-center justify-center shadow-[0_0_20px_rgba(56,189,248,0.55)]">
-                      <span class="material-symbols-outlined text-[18px] sm:text-[22px]">arrow_forward</span>
-                    </div>
-                  </div>
-                </article>
-
-                <!-- Service 02: Frontend Development (Radiant Burnt Amber & Fiery Orange - Default Active Center) -->
-                <article class="services-wheel-card absolute w-[92vw] max-w-[720px] h-[175px] sm:h-[190px] md:h-[200px] rounded-[26px] bg-gradient-to-b from-[#B83E08] via-[#7A1E02] to-[#3D0A00] border-2 border-[#FF7A00] text-white overflow-hidden shadow-2xl flex items-center justify-between p-5 sm:p-6 md:p-7 cursor-pointer select-none transition-all duration-500" data-service-index="1">
-                  <div class="flex flex-col justify-between h-full max-w-[62%] z-10">
-                    <div>
-                      <div class="inline-flex items-center px-3 py-0.5 rounded-full bg-[#7A1E02] border border-[#FF7A00]/80 text-[10px] font-label-code text-[#FFE5BE] font-bold mb-1.5 sm:mb-2">
-                        SERVICE 02 &bull; CORE
+                      <div class="flex items-center gap-1.5 flex-wrap pt-2">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-label-code text-white/80">
+                          <span class="text-[#38BDF8]">≈</span> Fluid CSS
+                        </span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-label-code text-white/80">
+                          <span class="text-[#38BDF8]">📱</span> Mobile-First
+                        </span>
                       </div>
-                      <h3 class="font-display-hero text-xl sm:text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-snug">
-                        Frontend Development
-                      </h3>
-                      <p class="text-xs sm:text-sm text-white/70 line-clamp-2 mt-1">
-                        Building modern single-page apps and server-rendered portals utilizing React, Next.js, and robust state architectures.
-                      </p>
                     </div>
-
-                    <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap pt-1.5">
-                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] sm:text-[11px] font-label-code text-white/80">
-                        <span class="text-[#00D8FF]">⚛</span> React
-                      </span>
-                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] sm:text-[11px] font-label-code text-white/80">
-                        <span class="w-3 h-3 rounded-full bg-white text-black text-[8px] font-black flex items-center justify-center">N</span> Next.js
-                      </span>
-                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] sm:text-[11px] font-label-code text-white/80">
-                        <span class="text-[#38BDF8]">TS</span> TypeScript
-                      </span>
-                    </div>
-                  </div>
-
-                  <div class="relative flex items-center justify-end w-[35%] h-full">
-                    <div class="service-icon-box w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#FF5A00]/20 border border-[#FF5A00]/40 flex items-center justify-center mr-3 sm:mr-4">
-                      <span class="material-symbols-outlined text-[#FF5A00] text-[32px] sm:text-[38px]">code</span>
-                    </div>
-                    <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-gradient-to-r from-[#FF5A00] to-[#D86018] text-white flex items-center justify-center shadow-[0_0_20px_rgba(255,90,0,0.6)]">
-                      <span class="material-symbols-outlined text-[18px] sm:text-[22px]">arrow_forward</span>
-                    </div>
-                  </div>
-                </article>
-
-                <!-- Service 03: UI/UX Interaction Design (Grape Royale & Violet Rose) -->
-                <article class="services-wheel-card absolute w-[92vw] max-w-[720px] h-[175px] sm:h-[190px] md:h-[200px] rounded-[26px] bg-gradient-to-b from-[#4A1E46] via-[#321330] to-[#1D081C] border border-[#E879F9]/40 text-white overflow-hidden shadow-2xl flex items-center justify-between p-5 sm:p-6 md:p-7 cursor-pointer select-none transition-all duration-500" data-service-index="2">
-                  <div class="flex flex-col justify-between h-full max-w-[62%] z-10">
-                    <div>
-                      <div class="inline-flex items-center px-3 py-0.5 rounded-full bg-[#321330] border border-[#8B3B83]/80 text-[10px] font-label-code text-[#F5D0FE] font-semibold mb-1.5 sm:mb-2">
-                        SERVICE 03
+                    <div class="shrink-0 flex items-center justify-center">
+                      <div class="service-icon-box w-12 h-12 rounded-2xl bg-[#38BDF8]/15 border border-[#38BDF8]/35 flex items-center justify-center shadow-lg group-hover:shadow-[0_0_20px_rgba(56,189,248,0.5)]">
+                        <span class="material-symbols-outlined text-[#38BDF8] text-[26px]">devices</span>
                       </div>
-                      <h3 class="font-display-hero text-xl sm:text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-snug">
-                        UI/UX Interaction Design
-                      </h3>
-                      <p class="text-xs sm:text-sm text-white/70 line-clamp-2 mt-1">
-                        Transforming wireframes into high-fidelity Figma components, design tokens, and human-centric micro-interactions.
-                      </p>
                     </div>
+                  </article>
 
-                    <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap pt-1.5">
-                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] sm:text-[11px] font-label-code text-white/80">
-                        <span class="text-[#F24E1E]">❖</span> Figma
-                      </span>
-                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] sm:text-[11px] font-label-code text-white/80">
-                        <span class="text-[#E879F9]">Tokens</span> Design Systems
-                      </span>
-                    </div>
-                  </div>
-
-                  <div class="relative flex items-center justify-end w-[35%] h-full">
-                    <div class="service-icon-box w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#E879F9]/15 border border-[#E879F9]/35 flex items-center justify-center mr-3 sm:mr-4">
-                      <span class="material-symbols-outlined text-[#E879F9] text-[32px] sm:text-[38px]">palette</span>
-                    </div>
-                    <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-gradient-to-r from-[#E879F9] to-[#86198F] text-white flex items-center justify-center shadow-[0_0_20px_rgba(232,121,249,0.5)]">
-                      <span class="material-symbols-outlined text-[18px] sm:text-[22px]">arrow_forward</span>
-                    </div>
-                  </div>
-                </article>
-
-                <!-- Service 04: Performance Tuning (Velvet Deep Wine & Warm Coral) -->
-                <article class="services-wheel-card absolute w-[92vw] max-w-[720px] h-[175px] sm:h-[190px] md:h-[200px] rounded-[26px] bg-gradient-to-b from-[#4A1220] via-[#2E0913] to-[#180409] border border-[#FF5A00]/40 text-white overflow-hidden shadow-2xl flex items-center justify-between p-5 sm:p-6 md:p-7 cursor-pointer select-none transition-all duration-500" data-service-index="3">
-                  <div class="flex flex-col justify-between h-full max-w-[62%] z-10">
-                    <div>
-                      <div class="inline-flex items-center px-3 py-0.5 rounded-full bg-[#2E0913] border border-[#82273D]/80 text-[10px] font-label-code text-[#FF9E66] font-semibold mb-1.5 sm:mb-2">
-                        SERVICE 04
+                  <!-- Service 02: Frontend Development (Core) -->
+                  <article class="service-carousel-card is-active relative w-full rounded-2xl bg-gradient-to-br from-[#B83E08]/85 via-[#7A1E02]/92 to-[#3D0A00]/95 border-2 border-[#FF7A00] p-4 sm:p-5 shadow-2xl flex items-center justify-between transition-all duration-300 group" data-service-index="1">
+                    <div class="flex flex-col justify-between h-full pr-2.5 z-10 flex-1">
+                      <div>
+                        <div class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#7A1E02] border border-[#FF7A00]/80 text-[10px] font-label-code text-[#FFE5BE] font-bold mb-1">
+                          SERVICE 02 &bull; CORE
+                        </div>
+                        <h3 class="font-display-hero text-base sm:text-lg font-bold text-white tracking-tight leading-snug group-hover:text-[#FFAE70] transition-colors">
+                          Frontend Development
+                        </h3>
+                        <p class="text-xs text-white/80 line-clamp-2 mt-1 leading-relaxed">
+                          Building reactive single-page apps and server-rendered portals utilizing React, Next.js, and TypeScript.
+                        </p>
                       </div>
-                      <h3 class="font-display-hero text-xl sm:text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-snug">
-                        Performance Tuning
-                      </h3>
-                      <p class="text-xs sm:text-sm text-white/70 line-clamp-2 mt-1">
-                        Auditing and accelerating web load times, optimizing Core Web Vitals, minimizing bundle sizes, and image compression.
-                      </p>
-                    </div>
-
-                    <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap pt-1.5">
-                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] sm:text-[11px] font-label-code text-white/80">
-                        <span class="text-[#22C55E]">✓</span> Lighthouse 95+
-                      </span>
-                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] sm:text-[11px] font-label-code text-white/80">
-                        <span class="text-[#FF8A3D]">⚡</span> Web Vitals
-                      </span>
-                    </div>
-                  </div>
-
-                  <div class="relative flex items-center justify-end w-[35%] h-full">
-                    <div class="service-icon-box w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#FF5A00]/15 border border-[#FF5A00]/35 flex items-center justify-center mr-3 sm:mr-4">
-                      <span class="material-symbols-outlined text-[#FF5A00] text-[32px] sm:text-[38px]">speed</span>
-                    </div>
-                    <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-gradient-to-r from-[#FF5A00] to-[#521626] text-white flex items-center justify-center shadow-[0_0_20px_rgba(255,90,0,0.5)]">
-                      <span class="material-symbols-outlined text-[18px] sm:text-[22px]">arrow_forward</span>
-                    </div>
-                  </div>
-                </article>
-
-                <!-- Service 05: Motion & Interaction (Earthy Moss Bronze & Champagne Gold) -->
-                <article class="services-wheel-card absolute w-[92vw] max-w-[720px] h-[175px] sm:h-[190px] md:h-[200px] rounded-[26px] bg-gradient-to-b from-[#3D3A1E] via-[#262412] to-[#131208] border border-[#FDE047]/40 text-white overflow-hidden shadow-2xl flex items-center justify-between p-5 sm:p-6 md:p-7 cursor-pointer select-none transition-all duration-500" data-service-index="4">
-                  <div class="flex flex-col justify-between h-full max-w-[62%] z-10">
-                    <div>
-                      <div class="inline-flex items-center px-3 py-0.5 rounded-full bg-[#262412] border border-[#8A844D]/80 text-[10px] font-label-code text-[#FEF08A] font-semibold mb-1.5 sm:mb-2">
-                        SERVICE 05
+                      <div class="flex items-center gap-1.5 flex-wrap pt-2">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-label-code text-white/80">
+                          <span class="text-[#00D8FF]">⚛</span> React
+                        </span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-label-code text-white/80">
+                          <span class="w-2.5 h-2.5 rounded-full bg-white text-black text-[7px] font-black inline-flex items-center justify-center">N</span> Next.js
+                        </span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-label-code text-white/80">
+                          <span class="text-[#38BDF8]">TS</span> TypeScript
+                        </span>
                       </div>
-                      <h3 class="font-display-hero text-xl sm:text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-snug">
-                        Motion &amp; Interaction
-                      </h3>
-                      <p class="text-xs sm:text-sm text-white/70 line-clamp-2 mt-1">
-                        Implementing fluid scroll scrubbing, canvas background sequences, hover transitions, and engaging micro-interactions.
-                      </p>
+                    </div>
+                    <div class="shrink-0 flex items-center justify-center">
+                      <div class="service-icon-box w-12 h-12 rounded-2xl bg-[#FF5A00]/25 border border-[#FF5A00]/50 flex items-center justify-center shadow-lg group-hover:shadow-[0_0_25px_rgba(255,90,0,0.7)]">
+                        <span class="material-symbols-outlined text-[#FF5A00] text-[26px]">code</span>
+                      </div>
+                    </div>
+                  </article>
+
+                  <!-- Service 03: UI/UX Interaction Design -->
+                  <article class="service-carousel-card relative w-full rounded-2xl bg-gradient-to-br from-[#4A1E46]/90 via-[#321330]/95 to-[#1D081C]/95 border border-[#E879F9]/40 hover:border-[#E879F9] p-4 sm:p-5 shadow-xl flex items-center justify-between transition-all duration-300 group" data-service-index="2">
+                    <div class="flex flex-col justify-between h-full pr-2.5 z-10 flex-1">
+                      <div>
+                        <div class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#321330] border border-[#8B3B83]/80 text-[10px] font-label-code text-[#F5D0FE] font-semibold mb-1">
+                          SERVICE 03
+                        </div>
+                        <h3 class="font-display-hero text-base sm:text-lg font-bold text-white tracking-tight leading-snug group-hover:text-[#E879F9] transition-colors">
+                          UI/UX Interaction Design
+                        </h3>
+                        <p class="text-xs text-white/70 line-clamp-2 mt-1 leading-relaxed">
+                          Translating user flows into high-fidelity Figma components, design tokens, and smooth micro-interactions.
+                        </p>
+                      </div>
+                      <div class="flex items-center gap-1.5 flex-wrap pt-2">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-label-code text-white/80">
+                          <span class="text-[#F24E1E]">❖</span> Figma
+                        </span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-label-code text-white/80">
+                          <span class="text-[#E879F9]">Tokens</span> Design Systems
+                        </span>
+                      </div>
+                    </div>
+                    <div class="shrink-0 flex items-center justify-center">
+                      <div class="service-icon-box w-12 h-12 rounded-2xl bg-[#E879F9]/15 border border-[#E879F9]/35 flex items-center justify-center shadow-lg group-hover:shadow-[0_0_20px_rgba(232,121,249,0.5)]">
+                        <span class="material-symbols-outlined text-[#E879F9] text-[26px]">palette</span>
+                      </div>
+                    </div>
+                  </article>
+
+                </div>
+
+                <!-- ========================================== -->
+                <!-- MIDDLE COLUMN: 3D CYBER ROBOT STAGE        -->
+                <!-- ========================================== -->
+                <div class="lg:col-span-4 flex flex-col items-center justify-center order-1 lg:order-2 my-2 lg:my-0">
+                  <div class="robot-center-stage relative w-full max-w-[340px] xl:max-w-[370px] h-[480px] sm:h-[530px] rounded-3xl bg-gradient-to-b from-[#18181B]/85 via-[#101012]/92 to-[#09090B] border border-[#FF5A00]/35 shadow-[0_0_45px_rgba(255,90,0,0.2)] p-3 overflow-hidden flex flex-col items-center justify-center group">
+                    <!-- Ambient cyber background glow -->
+                    <div class="absolute inset-0 bg-radial from-[#FF5A00]/15 via-transparent to-transparent pointer-events-none blur-2xl"></div>
+                    <div class="absolute -top-10 -right-10 w-44 h-44 rounded-full bg-[#38BDF8]/10 blur-3xl pointer-events-none"></div>
+
+                    <!-- Top Badge -->
+                    <div class="absolute top-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 border border-[#FF5A00]/40 backdrop-blur-md shadow-lg pointer-events-none">
+                      <span class="w-2 h-2 rounded-full bg-[#FF5A00] animate-pulse"></span>
+                      <span class="text-[11px] font-label-code text-[#FFE5BE] font-bold uppercase tracking-wider">3D Cyber Robot</span>
                     </div>
 
-                    <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap pt-1.5">
-                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] sm:text-[11px] font-label-code text-white/80">
-                        <span class="text-[#FDE047]">GSAP</span> ScrollTrigger
-                      </span>
-                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] sm:text-[11px] font-label-code text-white/80">
-                        <span class="text-[#FEF08A]">Framer</span> Motion
-                      </span>
+                    <!-- Floating Robot 3D Canvas -->
+                    <div class="robot-floating-wrapper w-full h-[380px] sm:h-[430px] flex items-center justify-center relative z-10">
+                      <model-viewer
+                        id="robot-3d-model"
+                        src="assets/3d_robot.glb"
+                        alt="3D Interactive Robot - Tasnim Tanha Portfolio"
+                        auto-rotate
+                        auto-rotate-delay="0"
+                        rotation-per-second="20deg"
+                        camera-controls
+                        touch-action="pan-y"
+                        disable-zoom
+                        shadow-intensity="1.6"
+                        shadow-softness="0.75"
+                        exposure="1.2"
+                        camera-orbit="0deg 75deg 105%"
+                        field-of-view="32deg"
+                        interaction-prompt="none"
+                        style="width: 100%; height: 100%; background: transparent; --poster-color: transparent;"
+                        class="w-full h-full cursor-grab active:cursor-grabbing">
+                        <div slot="poster" class="flex flex-col items-center justify-center w-full h-full text-center gap-3">
+                          <div class="w-10 h-10 rounded-full border-2 border-[#FF5A00] border-t-transparent animate-spin"></div>
+                          <span class="text-xs font-label-code text-[#FFE5BE] tracking-widest uppercase">Loading 3D Robot...</span>
+                        </div>
+                      </model-viewer>
                     </div>
-                  </div>
 
-                  <div class="relative flex items-center justify-end w-[35%] h-full">
-                    <div class="service-icon-box w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#FDE047]/15 border border-[#FDE047]/35 flex items-center justify-center mr-3 sm:mr-4">
-                      <span class="material-symbols-outlined text-[#FDE047] text-[32px] sm:text-[38px]">auto_awesome</span>
-                    </div>
-                    <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-gradient-to-r from-[#EAB308] to-[#854D0E] text-white flex items-center justify-center shadow-[0_0_20px_rgba(234,179,8,0.5)]">
-                      <span class="material-symbols-outlined text-[18px] sm:text-[22px]">arrow_forward</span>
-                    </div>
-                  </div>
-                </article>
-                    <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-gradient-to-r from-[#EAB308] to-[#854D0E] text-white flex items-center justify-center shadow-[0_0_20px_rgba(234,179,8,0.5)]">
-                      <span class="material-symbols-outlined text-[18px] sm:text-[22px]">arrow_forward</span>
+                    <!-- Glowing Futuristic Pedestal -->
+                    <div class="robot-neon-pedestal"></div>
+                    <div class="absolute bottom-6 w-[200px] h-[22px] rounded-full border border-[#FF5A00]/40 bg-gradient-to-r from-transparent via-[#FF5A00]/25 to-transparent pointer-events-none shadow-[0_0_25px_#FF5A00]"></div>
+
+                    <!-- Interactive Hint Bottom Badge -->
+                    <div class="absolute bottom-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/70 border border-white/10 backdrop-blur-md pointer-events-none text-white/70 text-[10px] font-label-code uppercase tracking-wider">
+                      <span class="material-symbols-outlined text-[14px] text-[#FF5A00]">3d_rotation</span>
+                      <span>Drag to Rotate 360&deg;</span>
                     </div>
                   </div>
-                </article>
+                </div>
+
+                <!-- ========================================== -->
+                <!-- RIGHT COLUMN: 3 CAROUSEL CARDS (4, 5, 6)   -->
+                <!-- ========================================== -->
+                <div class="lg:col-span-4 flex flex-col gap-4 order-3 lg:order-3">
+                  
+                  <!-- Service 04: Performance Tuning -->
+                  <article class="service-carousel-card relative w-full rounded-2xl bg-gradient-to-br from-[#4A1220]/90 via-[#2E0913]/95 to-[#180409]/95 border border-[#FF5A00]/40 hover:border-[#FF5A00] p-4 sm:p-5 shadow-xl flex items-center justify-between transition-all duration-300 group" data-service-index="3">
+                    <div class="flex flex-col justify-between h-full pr-2.5 z-10 flex-1">
+                      <div>
+                        <div class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#2E0913] border border-[#82273D]/80 text-[10px] font-label-code text-[#FF9E66] font-semibold mb-1">
+                          SERVICE 04
+                        </div>
+                        <h3 class="font-display-hero text-base sm:text-lg font-bold text-white tracking-tight leading-snug group-hover:text-[#FF9E66] transition-colors">
+                          Performance Tuning
+                        </h3>
+                        <p class="text-xs text-white/70 line-clamp-2 mt-1 leading-relaxed">
+                          Auditing web load times, optimizing Core Web Vitals, minimizing bundle size, and asset caching.
+                        </p>
+                      </div>
+                      <div class="flex items-center gap-1.5 flex-wrap pt-2">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-label-code text-white/80">
+                          <span class="text-[#22C55E]">✓</span> Lighthouse 95+
+                        </span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-label-code text-white/80">
+                          <span class="text-[#FF8A3D]">⚡</span> Web Vitals
+                        </span>
+                      </div>
+                    </div>
+                    <div class="shrink-0 flex items-center justify-center">
+                      <div class="service-icon-box w-12 h-12 rounded-2xl bg-[#FF5A00]/15 border border-[#FF5A00]/35 flex items-center justify-center shadow-lg group-hover:shadow-[0_0_20px_rgba(255,90,0,0.5)]">
+                        <span class="material-symbols-outlined text-[#FF5A00] text-[26px]">speed</span>
+                      </div>
+                    </div>
+                  </article>
+
+                  <!-- Service 05: Motion & Interaction -->
+                  <article class="service-carousel-card relative w-full rounded-2xl bg-gradient-to-br from-[#3D3A1E]/90 via-[#262412]/95 to-[#131208]/95 border border-[#FDE047]/40 hover:border-[#FDE047] p-4 sm:p-5 shadow-xl flex items-center justify-between transition-all duration-300 group" data-service-index="4">
+                    <div class="flex flex-col justify-between h-full pr-2.5 z-10 flex-1">
+                      <div>
+                        <div class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#262412] border border-[#8A844D]/80 text-[10px] font-label-code text-[#FEF08A] font-semibold mb-1">
+                          SERVICE 05
+                        </div>
+                        <h3 class="font-display-hero text-base sm:text-lg font-bold text-white tracking-tight leading-snug group-hover:text-[#FDE047] transition-colors">
+                          Motion &amp; Interaction
+                        </h3>
+                        <p class="text-xs text-white/70 line-clamp-2 mt-1 leading-relaxed">
+                          Implementing fluid scroll scrubbing, canvas background sequences, hover states, and micro-interactions.
+                        </p>
+                      </div>
+                      <div class="flex items-center gap-1.5 flex-wrap pt-2">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-label-code text-white/80">
+                          <span class="text-[#FDE047]">GSAP</span> ScrollTrigger
+                        </span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-label-code text-white/80">
+                          <span class="text-[#FEF08A]">Framer</span> Motion
+                        </span>
+                      </div>
+                    </div>
+                    <div class="shrink-0 flex items-center justify-center">
+                      <div class="service-icon-box w-12 h-12 rounded-2xl bg-[#FDE047]/15 border border-[#FDE047]/35 flex items-center justify-center shadow-lg group-hover:shadow-[0_0_20px_rgba(253,224,71,0.5)]">
+                        <span class="material-symbols-outlined text-[#FDE047] text-[26px]">auto_awesome</span>
+                      </div>
+                    </div>
+                  </article>
+
+                  <!-- Service 06: Full-Stack & Cloud Architecture -->
+                  <article class="service-carousel-card relative w-full rounded-2xl bg-gradient-to-br from-[#1E234A]/90 via-[#131633]/95 to-[#0A0C1E]/95 border border-[#818CF8]/40 hover:border-[#818CF8] p-4 sm:p-5 shadow-xl flex items-center justify-between transition-all duration-300 group" data-service-index="5">
+                    <div class="flex flex-col justify-between h-full pr-2.5 z-10 flex-1">
+                      <div>
+                        <div class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#131633] border border-[#6366F1]/80 text-[10px] font-label-code text-[#C7D2FE] font-semibold mb-1">
+                          SERVICE 06
+                        </div>
+                        <h3 class="font-display-hero text-base sm:text-lg font-bold text-white tracking-tight leading-snug group-hover:text-[#818CF8] transition-colors">
+                          Full-Stack &amp; Cloud
+                        </h3>
+                        <p class="text-xs text-white/70 line-clamp-2 mt-1 leading-relaxed">
+                          Architecting resilient REST &amp; GraphQL API integrations, serverless edge routes, and headless CMS.
+                        </p>
+                      </div>
+                      <div class="flex items-center gap-1.5 flex-wrap pt-2">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-label-code text-white/80">
+                          <span class="text-[#818CF8]">Node.js</span> Backend
+                        </span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-label-code text-white/80">
+                          <span class="text-[#00D8FF]">REST</span> APIs
+                        </span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-label-code text-white/80">
+                          <span class="text-[#A5B4FC]">Cloud</span> Vercel
+                        </span>
+                      </div>
+                    </div>
+                    <div class="shrink-0 flex items-center justify-center">
+                      <div class="service-icon-box w-12 h-12 rounded-2xl bg-[#818CF8]/15 border border-[#818CF8]/35 flex items-center justify-center shadow-lg group-hover:shadow-[0_0_20px_rgba(129,140,248,0.5)]">
+                        <span class="material-symbols-outlined text-[#818CF8] text-[26px]">cloud_sync</span>
+                      </div>
+                    </div>
+                  </article>
+
+                </div>
 
               </div>
             </div>
@@ -3083,221 +3185,64 @@
     })();
 
     // -------------------------------------------------------------
-    // VERTICAL 3D CYLINDRICAL ROLLING DRUM FOR SERVICES (What I Do - 1 Center, 2 Above, 2 Below, Mouse Wheel Rotation)
+    // SERVICES SECTION: 3D ROBOT CENTER + 3 LEFT & 3 RIGHT CAROUSEL CONTROLLER
     // -------------------------------------------------------------
-    (function initServicesWheel() {
-      let activeServiceIndex = 1; // Default to Service 02: Frontend Development
-      const wheelCards = document.querySelectorAll('.services-wheel-card');
-      const TOTAL_SERVICES = wheelCards.length;
-
-      function updateServicesWheel(direction = 1) {
-        const isMobile = window.innerWidth < 640;
-        const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
-        const step1 = isMobile ? 85 : (isTablet ? 100 : 115);
-        const step2 = isMobile ? 165 : (isTablet ? 195 : 225);
-
-        wheelCards.forEach((card, idx) => {
-          let offset = idx - activeServiceIndex;
-          if (offset > TOTAL_SERVICES / 2) offset -= TOTAL_SERVICES;
-          if (offset < -TOTAL_SERVICES / 2) offset += TOTAL_SERVICES;
-
-          // Seamless wrap transition: if a card jumped across the wrap boundary (-2 to +2 or +2 to -2)
-          // it enters from behind on its new side rather than sliding through the center active card!
-          if (card._prevOffset !== undefined && Math.abs(offset - card._prevOffset) > 2) {
-            card.style.transition = 'none';
-            if (direction > 0) {
-              // Scrolling down/forward: wrapped from top to bottom, start from below
-              card.style.transform = `translateY(${step2 + 60}px) scale(0.78) rotateX(-50deg) translateZ(-200px)`;
-            } else {
-              // Scrolling up/backward: wrapped from bottom to top, start from above
-              card.style.transform = `translateY(${-step2 - 60}px) scale(0.78) rotateX(50deg) translateZ(-200px)`;
-            }
-            card.style.opacity = '0';
-            void card.offsetWidth; // Force reflow to register starting point
-            card.style.transition = '';
-          }
-
-          card._prevOffset = offset;
-
-          let translateY = 0;
-          let rotateX = 0;
-          let translateZ = 0;
-          let scale = 1;
-          let zIndex = 35;
-
-          if (offset === 0) {
-            translateY = 0;
-            rotateX = 0;
-            translateZ = 30;
-            scale = 1.02;
-            zIndex = 35;
-          } else if (offset === -1) {
-            translateY = -step1;
-            rotateX = 22;
-            translateZ = -60;
-            scale = 0.93;
-            zIndex = 25;
-          } else if (offset === 1) {
-            translateY = step1;
-            rotateX = -22;
-            translateZ = -60;
-            scale = 0.93;
-            zIndex = 25;
-          } else if (offset === -2) {
-            translateY = -step2;
-            rotateX = 40;
-            translateZ = -140;
-            scale = 0.84;
-            zIndex = 15;
-          } else if (offset === 2) {
-            translateY = step2;
-            rotateX = -40;
-            translateZ = -140;
-            scale = 0.84;
-            zIndex = 15;
-          }
-
-          card.style.transform = `translateY(${translateY}px) scale(${scale}) rotateX(${rotateX}deg) translateZ(${translateZ}px)`;
-          card.style.zIndex = zIndex;
-          card.style.opacity = '1';
-          card.style.pointerEvents = 'auto';
-
-          const serviceAccents = ['#38BDF8', '#FF7A00', '#E879F9', '#FF9E66', '#FDE047'];
-          const srvAccent = serviceAccents[idx] || '#FF5A00';
-
-          if (offset === 0) {
-            card.classList.add('is-active');
-            card.style.borderColor = srvAccent;
-            card.style.borderWidth = '2px';
-            card.style.boxShadow = `0 0 35px ${srvAccent}80, 0 25px 50px rgba(0,0,0,0.95)`;
-            card.style.filter = 'brightness(1)';
-          } else {
-            card.classList.remove('is-active');
-            card.style.borderColor = `${srvAccent}35`;
-            card.style.borderWidth = '1px';
-            card.style.boxShadow = '0 15px 35px rgba(0,0,0,0.65)';
-            card.style.filter = 'brightness(0.88)';
-          }
-        });
-      }
-
-      window.setServicesWheel = function (index, direction = 1) {
-        activeServiceIndex = (index + TOTAL_SERVICES) % TOTAL_SERVICES;
-        updateServicesWheel(direction);
-      };
-
-      window.shiftServicesWheel = function (direction) {
-        setServicesWheel(activeServiceIndex + direction, direction);
-      };
-
-      // Direct click on each wheel card
-      wheelCards.forEach((card, idx) => {
-        card.onclick = function() {
-          let diff = idx - activeServiceIndex;
-          if (diff > TOTAL_SERVICES / 2) diff -= TOTAL_SERVICES;
-          if (diff < -TOTAL_SERVICES / 2) diff += TOTAL_SERVICES;
-          const dir = diff >= 0 ? 1 : -1;
-          setServicesWheel(idx, dir);
-        };
-      });
-
-      // Header button controls
+    (function initServicesCarousel() {
+      const cards = document.querySelectorAll('.service-carousel-card');
+      const robotModel = document.getElementById('robot-3d-model');
       const prevBtn = document.getElementById('services-prev-btn');
       const nextBtn = document.getElementById('services-next-btn');
-      if (prevBtn) {
-        prevBtn.onclick = function(e) {
-          e.preventDefault();
-          shiftServicesWheel(-1);
-        };
-      }
-      if (nextBtn) {
-        nextBtn.onclick = function(e) {
-          e.preventDefault();
-          shiftServicesWheel(1);
-        };
-      }
+      let activeIndex = 1; // Default to Service 02: Frontend Development (Core)
 
-      const drumContainer = document.getElementById('services-wheel-container');
-      const drumStage = drumContainer ? drumContainer.parentElement : null;
-      const wheelTargets = [drumContainer, drumStage].filter(Boolean);
-
-      // Ultra-Smooth Mouse Wheel Rotation with Pacing & Cooldown
-      let isWheeling = false;
-      let wheelAccumulator = 0;
-      let wheelResetTimer = null;
-
-      wheelTargets.forEach(target => {
-        target.addEventListener('wheel', e => {
-          e.preventDefault();
-
-          const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
-          if (Math.abs(delta) < 8) return;
-
-          wheelAccumulator += delta;
-
-          if (isWheeling) return;
-
-          // When accumulated delta reaches 35px threshold, execute 1 smooth notch rotation
-          if (Math.abs(wheelAccumulator) >= 35) {
-            isWheeling = true;
-            const dir = wheelAccumulator > 0 ? 1 : -1;
-            shiftServicesWheel(dir);
-            wheelAccumulator = 0;
-
-            // Cooldown perfectly tuned to CSS transition duration (480ms)
-            setTimeout(() => {
-              isWheeling = false;
-              wheelAccumulator = 0;
-            }, 480);
+      function setActiveService(index) {
+        if (!cards.length) return;
+        activeIndex = (index + cards.length) % cards.length;
+        cards.forEach((card, idx) => {
+          if (idx === activeIndex) {
+            card.classList.add('is-active');
+            card.style.transform = 'translateY(-4px) scale(1.02)';
+          } else {
+            card.classList.remove('is-active');
+            card.style.transform = '';
           }
+        });
 
-          clearTimeout(wheelResetTimer);
-          wheelResetTimer = setTimeout(() => {
-            wheelAccumulator = 0;
-          }, 180);
-        }, { passive: false });
+        // Rotate 3D robot towards active card side
+        if (robotModel && typeof robotModel.setAttribute === 'function') {
+          if (activeIndex < 3) {
+            // Left column (Services 1, 2, 3)
+            const angles = ['-32deg 75deg 105%', '-20deg 75deg 105%', '-28deg 78deg 105%'];
+            robotModel.setAttribute('camera-orbit', angles[activeIndex] || '-25deg 75deg 105%');
+          } else {
+            // Right column (Services 4, 5, 6)
+            const angles = ['28deg 78deg 105%', '20deg 75deg 105%', '32deg 75deg 105%'];
+            robotModel.setAttribute('camera-orbit', angles[activeIndex - 3] || '25deg 75deg 105%');
+          }
+        }
+      }
+
+      cards.forEach((card, idx) => {
+        card.addEventListener('click', () => {
+          setActiveService(idx);
+        });
       });
 
-      // Touch swipe (Vertical)
-      let touchStartY = 0;
-      if (drumContainer) {
-        drumContainer.addEventListener('touchstart', e => {
-          touchStartY = e.changedTouches[0].clientY;
-        }, { passive: true });
-        drumContainer.addEventListener('touchend', e => {
-          const diff = touchStartY - e.changedTouches[0].clientY;
-          if (Math.abs(diff) > 25) {
-            shiftServicesWheel(diff > 0 ? 1 : -1);
-          }
-        }, { passive: true });
-
-        // Mouse drag (Vertical)
-        let isDraggingDrum = false;
-        let dragStartY = 0;
-        let totalDragDiffY = 0;
-
-        drumContainer.addEventListener('mousedown', e => {
-          isDraggingDrum = true;
-          dragStartY = e.clientY;
-          totalDragDiffY = 0;
-        });
-
-        window.addEventListener('mousemove', e => {
-          if (!isDraggingDrum) return;
-          totalDragDiffY = dragStartY - e.clientY;
-        });
-
-        window.addEventListener('mouseup', () => {
-          if (!isDraggingDrum) return;
-          isDraggingDrum = false;
-          if (Math.abs(totalDragDiffY) > 30) {
-            shiftServicesWheel(totalDragDiffY > 0 ? 1 : -1);
-          }
+      if (prevBtn) {
+        prevBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          setActiveService(activeIndex - 1);
         });
       }
 
-      window.addEventListener('resize', () => updateServicesWheel(1), { passive: true });
-      updateServicesWheel(1);
+      if (nextBtn) {
+        nextBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          setActiveService(activeIndex + 1);
+        });
+      }
+
+      // Initial state
+      setActiveService(1);
     })();
 
     // -------------------------------------------------------------

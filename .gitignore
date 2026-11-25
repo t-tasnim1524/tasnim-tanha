@@ -17,5 +17,9 @@ desktop.ini
 node_modules/
 .npm/
 
+# Root level extra 3D files
+/*.glb
+!assets/3d_robot.glb
+
 # Vercel Deployment Artifacts
 .vercel/
