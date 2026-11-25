@@ -139,17 +139,16 @@
       position: absolute;
       left: 50%;
       top: 50%;
-      margin-left: -135px;
-      margin-top: -190px;
-      width: 270px;
-      height: 380px;
-      border-radius: 28px;
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.07) 0%, rgba(35, 18, 25, 0.55) 45%, rgba(15, 10, 14, 0.85) 100%);
-      backdrop-filter: blur(24px) saturate(180%);
-      -webkit-backdrop-filter: blur(24px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
-      padding: 24px 22px;
+      margin-left: -125px;
+      margin-top: -185px;
+      width: 250px;
+      height: 370px;
+      border-radius: 26px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.85);
+      padding: 22px 20px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -164,17 +163,50 @@
     }
     @media (max-width: 767px) {
       .curved-carousel-card {
-        width: 250px;
-        height: 340px;
-        margin-left: -125px;
-        margin-top: -50px;
-        padding: 20px 18px;
+        width: 230px;
+        height: 330px;
+        margin-left: -115px;
+        margin-top: -45px;
+        padding: 18px 16px;
       }
     }
+
+    /* PANTONE Swatches from User Reference (media_1795614050995_ac8e0b2b.jpg) */
+    /* Card 0: PANTONE 20-0200 TPM Gunpowder Charcoal */
+    .card-pantone-gunpowder {
+      background: linear-gradient(145deg, #2E3236 0%, #1E2023 55%, #111214 100%) !important;
+      border-color: rgba(255, 255, 255, 0.16) !important;
+    }
+    /* Card 1: PANTONE 159 C Warm Burnt Orange */
+    .card-pantone-orange {
+      background: linear-gradient(145deg, #B84A06 0%, #7A2803 55%, #3D1201 100%) !important;
+      border-color: rgba(255, 122, 0, 0.65) !important;
+    }
+    /* Card 2: PANTONE 19-3518 TCX Grape Royale */
+    .card-pantone-grape {
+      background: linear-gradient(145deg, #512D55 0%, #331A36 55%, #1C0C1E 100%) !important;
+      border-color: rgba(232, 121, 249, 0.35) !important;
+    }
+    /* Card 3: PANTONE 4102 C Deep Wine / Burgundy */
+    .card-pantone-wine {
+      background: linear-gradient(145deg, #54192A 0%, #300C17 55%, #1A050B 100%) !important;
+      border-color: rgba(255, 90, 110, 0.35) !important;
+    }
+    /* Card 4: PANTONE 7770 XGC Deep Moss / Olive Gold */
+    .card-pantone-olive {
+      background: linear-gradient(145deg, #615E36 0%, #3E3C22 55%, #1F1E10 100%) !important;
+      border-color: rgba(253, 224, 71, 0.35) !important;
+    }
+    /* Card 5: PANTONE Gunpowder & Grape Royale Hybrid */
+    .card-pantone-nightplum {
+      background: linear-gradient(145deg, #302638 0%, #1C1623 55%, #0F0B14 100%) !important;
+      border-color: rgba(129, 140, 248, 0.35) !important;
+    }
+
     .curved-carousel-card.is-active {
-      border-color: rgba(255, 122, 0, 0.85) !important;
-      box-shadow: 0 25px 60px -10px rgba(255, 90, 0, 0.45), 
-                  inset 0 -15px 30px -10px rgba(255, 90, 0, 0.4),
+      border-color: #FF7A00 !important;
+      box-shadow: 0 20px 50px -10px rgba(255, 90, 0, 0.55), 
+                  inset 0 0 30px rgba(255, 90, 0, 0.25),
                   0 0 25px rgba(255, 122, 0, 0.35) !important;
     }
     .curved-carousel-card.is-active .card-title {
@@ -2005,9 +2037,9 @@
                 </div>
               </div>
 
-              <!-- 6 SOFT GLASSMORPHISM CARDS (TRANSITIONED VIA JS 3D TRANSFORM) -->
-              <!-- Card 0: Responsive Web Design -->
-              <article class="curved-carousel-card group" data-card-index="0">
+              <!-- 6 SOFT GLASSMORPHISM CARDS (PANTONE COLOR THEMED FROM REFERENCE) -->
+              <!-- Card 0: Responsive Web Design (PANTONE Gunpowder) -->
+              <article class="curved-carousel-card card-pantone-gunpowder group" data-card-index="0">
                 <div class="flex items-center justify-between">
                   <div class="service-icon-box w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/90 group-hover:border-[#38BDF8] group-hover:text-[#38BDF8]">
                     <span class="material-symbols-outlined text-[26px]">devices</span>
@@ -2038,8 +2070,8 @@
                 </div>
               </article>
 
-              <!-- Card 1: Frontend Development (Core) -->
-              <article class="curved-carousel-card group" data-card-index="1">
+              <!-- Card 1: Frontend Development (PANTONE 159 C Warm Orange) -->
+              <article class="curved-carousel-card card-pantone-orange group" data-card-index="1">
                 <div class="flex items-center justify-between">
                   <div class="service-icon-box w-12 h-12 rounded-2xl bg-[#FF7A00]/15 border border-[#FF7A00]/50 flex items-center justify-center text-[#FF7A00] shadow-[0_0_15px_rgba(255,122,0,0.4)]">
                     <span class="font-mono text-xl font-black">&lt;/&gt;</span>
@@ -2073,8 +2105,8 @@
                 </div>
               </article>
 
-              <!-- Card 2: UI/UX Interaction Design -->
-              <article class="curved-carousel-card group" data-card-index="2">
+              <!-- Card 2: UI/UX Interaction Design (PANTONE Grape Royale) -->
+              <article class="curved-carousel-card card-pantone-grape group" data-card-index="2">
                 <div class="flex items-center justify-between">
                   <div class="service-icon-box w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/90 group-hover:border-[#E879F9] group-hover:text-[#E879F9]">
                     <span class="material-symbols-outlined text-[26px]">palette</span>
@@ -2105,8 +2137,8 @@
                 </div>
               </article>
 
-              <!-- Card 3: Performance Tuning -->
-              <article class="curved-carousel-card group" data-card-index="3">
+              <!-- Card 3: Performance Tuning (PANTONE 4102 C Deep Wine) -->
+              <article class="curved-carousel-card card-pantone-wine group" data-card-index="3">
                 <div class="flex items-center justify-between">
                   <div class="service-icon-box w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/90 group-hover:border-[#FF8A3D] group-hover:text-[#FF8A3D]">
                     <span class="material-symbols-outlined text-[26px]">speed</span>
@@ -2137,8 +2169,8 @@
                 </div>
               </article>
 
-              <!-- Card 4: Motion & Interaction -->
-              <article class="curved-carousel-card group" data-card-index="4">
+              <!-- Card 4: Motion & Interaction (PANTONE 7770 XGC Olive Moss) -->
+              <article class="curved-carousel-card card-pantone-olive group" data-card-index="4">
                 <div class="flex items-center justify-between">
                   <div class="service-icon-box w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/90 group-hover:border-[#FDE047] group-hover:text-[#FDE047]">
                     <span class="material-symbols-outlined text-[26px]">auto_awesome</span>
@@ -2169,8 +2201,8 @@
                 </div>
               </article>
 
-              <!-- Card 5: Full-Stack & Cloud -->
-              <article class="curved-carousel-card group" data-card-index="5">
+              <!-- Card 5: Full-Stack & Cloud (PANTONE Gunpowder & Grape Hybrid) -->
+              <article class="curved-carousel-card card-pantone-nightplum group" data-card-index="5">
                 <div class="flex items-center justify-between">
                   <div class="service-icon-box w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/90 group-hover:border-[#818CF8] group-hover:text-[#818CF8]">
                     <span class="material-symbols-outlined text-[26px]">cloud</span>
@@ -3287,7 +3319,7 @@
             // Desktop / Tablet 3D Curved Arc flanking the center robot
             const factor = isTablet 
               ? Math.min(0.85, Math.max(0.65, stageWidth / 950))
-              : Math.min(1.15, Math.max(0.78, stageWidth / 1220));
+              : Math.min(1.0, Math.max(0.75, stageWidth / 1250));
 
             // Slots: 
             // rel 0: Front-Left (Active Card)
@@ -3300,109 +3332,109 @@
 
             if (isTablet) {
               if (rel === 0) {
-                x = -215 * factor;
+                x = -155 * factor;
                 y = 0;
                 z = 20;
-                rotY = 8;
-                scale = 0.98;
+                rotY = 7;
+                scale = 0.96;
                 opacity = 1.0;
                 zIndex = 28;
               } else if (rel === 1) {
-                x = 215 * factor;
+                x = 155 * factor;
                 y = 0;
                 z = 10;
-                rotY = -8;
+                rotY = -7;
                 scale = 0.92;
-                opacity = 0.95;
+                opacity = 0.96;
                 zIndex = 26;
               } else if (rel === 5) {
-                x = -375 * factor;
+                x = -275 * factor;
                 y = 6;
-                z = -65;
-                rotY = 18;
-                scale = 0.78;
-                opacity = 0.68;
+                z = -60;
+                rotY = 16;
+                scale = 0.80;
+                opacity = 0.82;
                 zIndex = 18;
               } else if (rel === 2) {
-                x = 375 * factor;
+                x = 275 * factor;
                 y = 6;
-                z = -65;
-                rotY = -18;
-                scale = 0.78;
-                opacity = 0.68;
+                z = -60;
+                rotY = -16;
+                scale = 0.80;
+                opacity = 0.82;
                 zIndex = 18;
               } else if (rel === 4) {
-                x = -515 * factor;
+                x = -380 * factor;
                 y = 12;
-                z = -135;
-                rotY = 25;
-                scale = 0.62;
-                opacity = 0.32;
+                z = -120;
+                rotY = 22;
+                scale = 0.65;
+                opacity = 0.60;
                 zIndex = 12;
               } else if (rel === 3) {
-                x = 515 * factor;
+                x = 380 * factor;
                 y = 12;
-                z = -135;
-                rotY = -25;
-                scale = 0.62;
-                opacity = 0.32;
+                z = -120;
+                rotY = -22;
+                scale = 0.65;
+                opacity = 0.60;
                 zIndex = 12;
               }
             } else {
-              // Full Desktop 3D Arc with clear central pocket for the robot
+              // Full Desktop 3D Arc: Tightly grouped around robot, comfortably clear of screen edges
               if (rel === 0) {
-                // Active Front-Left Focus (Clear of robot)
-                x = -285 * factor;
+                // Active Front-Left Focus (Leaves central breathing room for robot)
+                x = -225 * factor;
                 y = 0;
                 z = 25;
-                rotY = 8;
-                scale = 1.04;
+                rotY = 7;
+                scale = 1.03;
                 opacity = 1.0;
                 zIndex = 28;
               } else if (rel === 1) {
-                // Front-Right (Clear of robot)
-                x = 285 * factor;
+                // Front-Right (Leaves central breathing room for robot)
+                x = 225 * factor;
                 y = 0;
                 z = 10;
-                rotY = -8;
-                scale = 0.98;
-                opacity = 0.95;
+                rotY = -7;
+                scale = 0.97;
+                opacity = 0.98;
                 zIndex = 26;
               } else if (rel === 5) {
                 // Mid-Left (Depth 1)
-                x = -485 * factor;
+                x = -365 * factor;
                 y = 6;
-                z = -75;
-                rotY = 18;
-                scale = 0.85;
-                opacity = 0.72;
+                z = -65;
+                rotY = 16;
+                scale = 0.84;
+                opacity = 0.88;
                 zIndex = 18;
               } else if (rel === 2) {
                 // Mid-Right (Depth 1)
-                x = 485 * factor;
+                x = 365 * factor;
                 y = 6;
-                z = -75;
-                rotY = -18;
-                scale = 0.85;
-                opacity = 0.72;
+                z = -65;
+                rotY = -16;
+                scale = 0.84;
+                opacity = 0.88;
                 zIndex = 18;
               } else if (rel === 4) {
                 // Far-Left (Depth 2)
-                x = -665 * factor;
+                x = -485 * factor;
                 y = 12;
-                z = -155;
-                rotY = 25;
+                z = -135;
+                rotY = 24;
                 scale = 0.70;
-                opacity = 0.42;
+                opacity = 0.70;
                 zIndex = 12;
               } else if (rel === 3) {
                 // Far-Right (Depth 2)
-                x = 665 * factor;
+                x = 485 * factor;
                 y = 12;
-                z = -155;
-                rotY = -25;
+                z = -135;
+                rotY = -24;
                 scale = 0.70;
-                opacity = 0.42;
+                opacity = 0.70;
                 zIndex = 12;
               }
             }
