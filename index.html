@@ -705,20 +705,28 @@
       }
     }
 
-    /* 3. Image Parallax & Organic Floating */
+    /* 3. Image Parallax & Scroll-Triggered Drop-In Animation */
     .about-portrait-wrap {
       will-change: transform;
     }
     .about-portrait-float {
-      animation: aboutPortraitFloat 6s ease-in-out infinite;
-      will-change: transform;
+      opacity: 0;
+      transform: translateY(-85px) scale(1.06);
+      transition: transform 0.95s cubic-bezier(0.16, 1, 0.3, 1), 
+                  opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: 0.18s;
+      will-change: transform, opacity;
     }
-    @keyframes aboutPortraitFloat {
-      0%, 100% {
-        transform: translateY(0px);
-      }
-      50% {
-        transform: translateY(-8px);
+    #about.is-revealed .about-portrait-float,
+    .about-portrait-wrap.is-revealed .about-portrait-float {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .about-portrait-float {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
       }
     }
     /* Portrait Image Breathing Glow Pulse */
@@ -4482,17 +4490,18 @@
 
       aboutCard.classList.add('is-revealed');
 
-      // Letter-by-Letter Reveal Trigger on Viewport Entry
-      function revealAboutLetters() {
+      // Scroll-Triggered Reveal on Viewport Entry (ABOUT Letters + Profile Image Drop-In)
+      function revealAboutElements() {
         if (aboutSection) aboutSection.classList.add('is-revealed');
         aboutHugeTitles.forEach(title => title.classList.add('is-revealed'));
+        document.querySelectorAll('.about-portrait-wrap').forEach(wrap => wrap.classList.add('is-revealed'));
       }
 
       if ('IntersectionObserver' in window) {
         const aboutObserver = new IntersectionObserver((entries, observer) => {
           entries.forEach(entry => {
             if (entry.isIntersecting) {
-              revealAboutLetters();
+              revealAboutElements();
               observer.unobserve(entry.target);
             }
           });
@@ -4504,7 +4513,7 @@
           aboutObserver.observe(aboutCard);
         }
       } else {
-        revealAboutLetters();
+        revealAboutElements();
       }
 
       // Update SVG perimeter border rects accurately to card bounds
