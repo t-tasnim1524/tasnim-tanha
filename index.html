@@ -806,6 +806,37 @@
       opacity: 1 !important;
       transform: translate3d(0, 0, 0) !important;
     }
+
+    /* 2.1 Unified Scroll-Triggered Section Reveal (Slide-Up + Fade-In + Subtle Scale) */
+    .section-reveal-wrap {
+      opacity: 0;
+      transform: translate3d(0, 48px, 0) scale(0.97);
+      transform-origin: 50% 20%;
+      will-change: opacity, transform;
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .section-reveal-wrap.is-section-visible {
+      opacity: 1 !important;
+      transform: translate3d(0, 0, 0) scale(1) !important;
+    }
+    /* Eliminate nested double-fade latency inside revealed sections */
+    .section-reveal-wrap .scroll-reveal {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+    @media (max-width: 640px) {
+      .section-reveal-wrap {
+        transform: translate3d(0, 36px, 0) scale(0.98);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .section-reveal-wrap {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+    }
     .stagger-group .stagger-item {
       opacity: 0;
       transform: translate3d(0, 24px, 0);
@@ -1085,6 +1116,8 @@
     };
   </script>
   <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <link rel="preload" href="assets/3d_robot.glb" as="fetch" type="model/gltf-binary" crossorigin>
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
@@ -1272,7 +1305,7 @@
         <!-- ======================================================== -->
         <!-- 2. ABOUT SECTION (#about) - EDITABLE DESIGN REFERENCE   -->
         <!-- ======================================================== -->
-        <section class="py-6 sm:py-10 lg:py-12 relative overflow-hidden" id="about">
+        <section class="section-reveal-wrap py-6 sm:py-10 lg:py-12 relative overflow-hidden" id="about">
           <!-- Ambient Orange Glow behind container -->
           <div class="about-ambient-glow"></div>
 
@@ -1394,7 +1427,7 @@
         <!-- ======================================================== -->
         <!-- 3. SKILLS SECTION (#skills) - 3D COVER FLOW DECK        -->
         <!-- ======================================================== -->
-        <section class="py-8 sm:py-10 lg:py-12 relative overflow-hidden" id="skills">
+        <section class="section-reveal-wrap py-8 sm:py-10 lg:py-12 relative overflow-hidden" id="skills">
           <div class="max-w-7xl mx-auto px-6 lg:px-12 scroll-reveal">
             
             <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
@@ -1678,7 +1711,7 @@
         <!-- 4. FEATURED PROJECTS SECTION (#projects)                 -->
         <!-- (VERTICAL 3D CYLINDRICAL DRUM CAROUSEL: 2 Above, 1 Center, 2 Below) -->
         <!-- ======================================================== -->
-        <section class="py-8 sm:py-10 lg:py-12 relative overflow-hidden" id="projects">
+        <section class="section-reveal-wrap py-8 sm:py-10 lg:py-12 relative overflow-hidden" id="projects">
           <!-- Ambient Orange Orbital Ring Glow Accents -->
           <div class="absolute -top-[120px] -left-[120px] w-[500px] h-[500px] rounded-full border border-[#FF5A00]/20 pointer-events-none opacity-40 blur-[1px]"></div>
           <div class="absolute -bottom-[140px] -right-[140px] w-[620px] h-[620px] rounded-full border border-[#FF5A00]/25 pointer-events-none opacity-50 blur-[1px]"></div>
@@ -1914,7 +1947,7 @@
         <!-- 5. HOW I WORK SECTION (#process)                         -->
         <!-- (3D CYLINDRICAL HORIZON DECK - Image 1 Match)            -->
         <!-- ======================================================== -->
-        <section class="pt-4 pb-10 sm:pt-6 sm:pb-12 lg:pt-6 lg:pb-14 relative overflow-hidden" id="process">
+        <section class="section-reveal-wrap pt-4 pb-10 sm:pt-6 sm:pb-12 lg:pt-6 lg:pb-14 relative overflow-hidden" id="process">
           <!-- Ambient Orange Orbital Ring Glow Accents (Matching Reference Image) -->
           <div class="absolute -top-[100px] -right-[100px] w-[500px] h-[500px] rounded-full border border-[#FF5A00]/20 pointer-events-none opacity-40 blur-[1px]"></div>
           <div class="absolute -bottom-[120px] -left-[120px] w-[550px] h-[550px] rounded-full border border-[#FF5A00]/25 pointer-events-none opacity-45 blur-[1px]"></div>
@@ -2109,7 +2142,7 @@
         <!-- 6. JOURNEY SECTION (#experience)                         -->
         <!-- (Exact match with reference mockup)                      -->
         <!-- ======================================================== -->
-        <section class="py-12 sm:py-16 lg:py-20 relative overflow-hidden border-t border-white/10" id="experience">
+        <section class="section-reveal-wrap py-12 sm:py-16 lg:py-20 relative overflow-hidden border-t border-white/10" id="experience">
           <!-- Ambient Orange Orbital Ring Glow Accents (Matching Reference Image) -->
           <div class="absolute -top-[120px] -right-[120px] w-[550px] h-[550px] rounded-full border border-[#FF5A00]/25 pointer-events-none opacity-45 blur-[1px]"></div>
           <div class="absolute -bottom-[120px] -left-[120px] w-[550px] h-[550px] rounded-full border border-[#FF5A00]/25 pointer-events-none opacity-45 blur-[1px]"></div>
@@ -2375,7 +2408,7 @@
                 <!-- ======================================================== -->
         <!-- 6. WHAT I DO SECTION (#services) - 3D CURVED CAROUSEL    -->
         <!-- ======================================================== -->
-        <section class="py-8 sm:py-10 lg:py-12 relative overflow-hidden" id="services">
+        <section class="section-reveal-wrap py-8 sm:py-10 lg:py-12 relative overflow-hidden" id="services">
           <!-- Ambient Orange Orbital Ring Glow Accents (Original Site Background Accents) -->
           <div class="absolute -top-[120px] -left-[120px] w-[500px] h-[500px] rounded-full border border-[#FF5A00]/20 pointer-events-none opacity-40 blur-[1px]"></div>
           <div class="absolute -bottom-[140px] -right-[140px] w-[620px] h-[620px] rounded-full border border-[#FF5A00]/25 pointer-events-none opacity-50 blur-[1px]"></div>
@@ -2631,7 +2664,7 @@
         <!-- ======================================================== -->
         <!-- 8. CONTACT SECTION (#contact)                            -->
         <!-- ======================================================== -->
-        <section class="py-8 sm:py-10 lg:py-12 relative border-t border-white/10 backdrop-blur-[2px]" id="contact">
+        <section class="section-reveal-wrap py-8 sm:py-10 lg:py-12 relative border-t border-white/10 backdrop-blur-[2px]" id="contact">
           <div class="max-w-7xl mx-auto px-6 lg:px-12 scroll-reveal">
             
             <div class="flex flex-col gap-2 mb-12">
@@ -2758,7 +2791,7 @@
     </main>
 
     <!-- FOOTER WITH MATCHING ICONS -->
-    <footer class="w-full border-t border-white/10 py-10 px-6 lg:px-12 bg-[#121416] relative z-20">
+    <footer class="section-reveal-wrap w-full border-t border-white/10 py-10 px-6 lg:px-12 bg-[#121416] relative z-20">
       <div class="max-w-7xl mx-auto flex flex-col gap-8">
         <div class="flex flex-col md:flex-row items-center justify-between gap-6">
           <div class="flex items-center gap-3">
@@ -4519,13 +4552,21 @@
         aboutHugeTitles.forEach(title => title.classList.add('is-revealed'));
         document.querySelectorAll('.about-portrait-wrap').forEach(wrap => wrap.classList.add('is-revealed'));
       }
+      function resetAboutElements() {
+        if (aboutSection) aboutSection.classList.remove('is-revealed');
+        aboutHugeTitles.forEach(title => title.classList.remove('is-revealed'));
+        document.querySelectorAll('.about-portrait-wrap').forEach(wrap => wrap.classList.remove('is-revealed'));
+      }
+      window.revealAboutElements = revealAboutElements;
+      window.resetAboutElements = resetAboutElements;
 
       if ('IntersectionObserver' in window) {
-        const aboutObserver = new IntersectionObserver((entries, observer) => {
+        const aboutObserver = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
             if (entry.isIntersecting) {
               revealAboutElements();
-              observer.unobserve(entry.target);
+            } else if (entry.boundingClientRect.top > 0) {
+              resetAboutElements();
             }
           });
         }, { threshold: 0.12 });
@@ -4928,6 +4969,107 @@
         revealTargets.forEach(el => obs.observe(el));
       } else {
         revealTargets.forEach(el => el.classList.add('is-revealed'));
+      }
+    })();
+
+    // =============================================================
+    // 4. UNIFIED SCROLL-TRIGGERED SECTION REVEAL (GSAP + ScrollTrigger)
+    // Supports 60FPS Slide-Up + Fade-In + Scale & Natural Reverse Scroll
+    // Sections: 02 About, 03 Skills, 04 Projects, 05 Process,
+    //           06 Experience, 07 Services, 08 Contact, 09 Footer
+    // =============================================================
+    (function initSectionReveal() {
+      // Respect user accessibility preference
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.querySelectorAll('.section-reveal-wrap').forEach(el => {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+          el.classList.add('is-section-visible');
+        });
+        return;
+      }
+
+      const sectionList = [
+        { id: 'about', el: document.getElementById('about'), isAbout: true },
+        { id: 'skills', el: document.getElementById('skills') },
+        { id: 'projects', el: document.getElementById('projects') },
+        { id: 'process', el: document.getElementById('process') },
+        { id: 'experience', el: document.getElementById('experience') },
+        { id: 'services', el: document.getElementById('services') },
+        { id: 'contact', el: document.getElementById('contact') },
+        { id: 'footer', el: document.querySelector('footer.section-reveal-wrap'), isFooter: true }
+      ].filter(item => item.el !== null);
+
+      if (sectionList.length === 0) return;
+
+      // Check if GSAP and ScrollTrigger are available
+      if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Synchronize ScrollTrigger with Lenis
+        if (window.lenis) {
+          window.lenis.on('scroll', ScrollTrigger.update);
+        }
+
+        sectionList.forEach(({ el, isAbout, isFooter }) => {
+          // Remove CSS transitions so GSAP has exclusive smooth interpolation control
+          el.style.transition = 'none';
+
+          gsap.fromTo(el,
+            {
+              y: 48,
+              opacity: 0,
+              scale: 0.97,
+              transformOrigin: "50% 20%"
+            },
+            {
+              y: 0,
+              opacity: 1,
+              scale: 1,
+              duration: 0.95,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: el,
+                start: isFooter ? "top 95%" : "top 86%",
+                toggleActions: "play none none reverse",
+                onEnter: () => {
+                  el.classList.add('is-section-visible');
+                  if (isAbout && typeof window.revealAboutElements === 'function') {
+                    window.revealAboutElements();
+                  }
+                },
+                onLeaveBack: () => {
+                  el.classList.remove('is-section-visible');
+                  if (isAbout && typeof window.resetAboutElements === 'function') {
+                    window.resetAboutElements();
+                  }
+                }
+              }
+            }
+          );
+        });
+      } else {
+        // Fallback: Bidirectional IntersectionObserver for reverse scroll support
+        const fallbackObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-section-visible');
+              if (entry.target.id === 'about' && typeof window.revealAboutElements === 'function') {
+                window.revealAboutElements();
+              }
+            } else {
+              // Natural reverse scroll: when scrolled back up above the section
+              if (entry.boundingClientRect.top > 0) {
+                entry.target.classList.remove('is-section-visible');
+                if (entry.target.id === 'about' && typeof window.resetAboutElements === 'function') {
+                  window.resetAboutElements();
+                }
+              }
+            }
+          });
+        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+        sectionList.forEach(({ el }) => fallbackObserver.observe(el));
       }
     })();
     document.getElementById('footer-year').textContent = new Date().getFullYear();
