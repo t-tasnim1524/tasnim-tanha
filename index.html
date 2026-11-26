@@ -131,7 +131,7 @@
     }
     @media (max-width: 767px) {
       .curved-carousel-stage {
-        height: 580px;
+        height: 620px;
       }
     }
     .curved-robot-centerpiece {
@@ -152,9 +152,9 @@
     }
     @media (max-width: 767px) {
       .curved-robot-centerpiece {
-        width: 200px;
-        height: 260px;
-        top: 26%;
+        width: 190px;
+        height: 230px;
+        top: 20%;
       }
     }
     .curved-carousel-card {
@@ -185,11 +185,34 @@
     }
     @media (max-width: 767px) {
       .curved-carousel-card {
-        width: 230px;
-        height: 330px;
-        margin-left: -115px;
-        margin-top: -45px;
-        padding: 18px 16px;
+        width: 226px;
+        height: 310px;
+        margin-left: -113px;
+        margin-top: -15px;
+        padding: 16px 14px;
+        border-radius: 24px;
+      }
+      .curved-carousel-card .service-icon-box {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+      }
+      .curved-carousel-card .service-icon-box span {
+        font-size: 20px !important;
+      }
+      .curved-carousel-card .card-title {
+        font-size: 16px !important;
+        line-height: 1.25 !important;
+        margin-bottom: 6px !important;
+      }
+      .curved-carousel-card .card-desc {
+        font-size: 11px !important;
+        line-height: 1.45 !important;
+        margin-bottom: 8px !important;
+      }
+      .curved-carousel-card .card-arrow-btn {
+        width: 32px !important;
+        height: 32px !important;
       }
     }
 
@@ -3862,19 +3885,19 @@
           if (isMobile) {
             // Mobile layout: active card in front below the robot, neighbors partially visible
             if (rel === 0) {
-              card.style.transform = `translate3d(0px, 80px, 20px) rotateY(0deg) scale(1)`;
+              card.style.transform = `translate3d(0px, 0px, 25px) rotateY(0deg) scale(1)`;
               card.style.opacity = '1';
               card.style.zIndex = '26';
             } else if (rel === 1) {
-              card.style.transform = `translate3d(145px, 85px, -50px) rotateY(-12deg) scale(0.82)`;
+              card.style.transform = `translate3d(118px, 6px, -45px) rotateY(-12deg) scale(0.82)`;
               card.style.opacity = '0.45';
               card.style.zIndex = '18';
             } else if (rel === N - 1) {
-              card.style.transform = `translate3d(-145px, 85px, -50px) rotateY(12deg) scale(0.82)`;
+              card.style.transform = `translate3d(-118px, 6px, -45px) rotateY(12deg) scale(0.82)`;
               card.style.opacity = '0.45';
               card.style.zIndex = '18';
             } else {
-              card.style.transform = `translate3d(0px, 90px, -150px) scale(0.6)`;
+              card.style.transform = `translate3d(0px, 15px, -150px) scale(0.6)`;
               card.style.opacity = '0';
               card.style.zIndex = '5';
               card.style.pointerEvents = 'none';
